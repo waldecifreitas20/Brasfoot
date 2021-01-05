@@ -11,11 +11,7 @@ public class Brasfoot{
     private static ArrayList<Jogador> allPlayers = initJogadores();
     
     public static void main(String[] args) {          
-       // new TelaInicial().setVisible(true);
-       //atq = 80; meio = 89; def = 78; gol = 89;
-       double ataque = (89*10 + 89*8)/18;
-       double defesa = (84*2 + 83*10 + 86*10)/22;
-        System.out.println((int)ataque+ " - "+ (int) defesa);
+        new TelaInicial().setVisible(true);  
     }      
     
     public static ArrayList<Clube> baseDadosClubes() {
@@ -29,7 +25,7 @@ public class Brasfoot{
                 index = i;
             }
         }
-        baseDadosClubes().add(index, clube);
+        baseDadosClubes().set(index, clube);
     }
     
     public static ArrayList<Jogador> baseDadosJogadores() {     
@@ -40,6 +36,14 @@ public class Brasfoot{
         for (int i = 0; i < baseDadosJogadores().size(); i++) {
             if (nomeJogador.equals(baseDadosJogadores().get(i).getNome())) {
                 return baseDadosJogadores().get(i);
+            }
+        }
+        return null;
+    }
+    public static Clube getClube(String nomeClube) {
+        for (int i = 0; i < baseDadosClubes().size(); i++) {
+            if (baseDadosClubes().get(i).getNome().equals(nomeClube)) {
+                return baseDadosClubes().get(i);
             }
         }
         return null;

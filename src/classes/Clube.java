@@ -9,32 +9,12 @@ import javax.swing.ImageIcon;
 
 public class Clube extends BaseClube{
     //<editor-fold desc="Variaveis">
-    private ArrayList<Jogador> 
-            elenco, 
-            reservas = new ArrayList(),
-            titulares = new ArrayList(); 
-    
-    private final int 
-            id,
-            relevancia;
-    
-    private Estatistica 
-            stats = new Estatistica();
-    
-    private double 
-            dinheiro, 
-            gastos, 
-            over,
-            forcaAtaque,
-            forcaDefesa;
-    
-    private final ImageIcon 
-            background,  
-            emblema, 
-            emblemaMini; 
-    
-    private final Color 
-            FOREGROUND;
+    private final Color FOREGROUND;
+    private final int id,relevancia;    
+    private Estatistica stats = new Estatistica();    
+    private final ImageIcon background,emblema,emblemaMini;     
+    private double dinheiro,gastos,over,forcaAtaque,forcaDefesa;    
+    private ArrayList<Jogador> elenco,reservas = new ArrayList(),titulares = new ArrayList();     
     //</editor-fold>
     
     public Clube(String nome, ArrayList<Jogador> elenco, short relevancia, 
@@ -88,21 +68,31 @@ public class Clube extends BaseClube{
     }
     
     private void calcOver() {
-        double 
-            forca = 0,
-            ataque = 0, 
-            defesa = 0;
+        double forca = 0, ataque = 0, defesa = 0;
+        int qtdAtq = 0, qtdDef = 0;
         
         for (int i = 0; i < this.elenco.size(); i++) {
             forca += this.elenco.get(i).getOver();
-            ataque += (double)(this.elenco.get(i).getAtaque()*10 + 
-                    this.elenco.get(i).getMeio()*8)/18;
-            defesa += (double)(this.elenco.get(i).getMeio()*2 + 
-                    this.elenco.get(i).getDefesa()*10 + 
-                    this.elenco.get(i).getGoleiro()*10)/20;
+            if (this.getElenco().get(i).getPosicao().equals("Atacante")) {                
+                qtdAtq++;
+                ataque += (double)(this.elenco.get(i).getAtaque()*10 + this.elenco.get(i).getMeio()*0.5)/10;
+            }
+            if (this.getElenco().get(i).getPosicao().equals("Meio-Campo")) {
+                qtdAtq++;
+                ataque += (double)(this.elenco.get(i).getAtaque()*0.5 + this.elenco.get(i).getMeio()*10)/10;
+            }
+            if (this.getElenco().get(i).getPosicao().equals("Defensor")) {
+                qtdDef++;
+                defesa += (double)(this.getElenco().get(i).getDefesa()*10 + this.getElenco().get(i).getMeio())/10;
+            }
+            if (this.getElenco().get(i).getPosicao().equals("Goleiro")) {
+                qtdDef++;                
+                defesa += (double)(this.elenco.get(i).getGoleiro());
+            }
+          
         }
-        this.forcaAtaque = ataque/this.elenco.size();
-        this.forcaDefesa = defesa/this.elenco.size();
+        this.forcaAtaque = ataque/qtdAtq;
+        this.forcaDefesa = defesa/qtdDef;
         this.over = forca/this.elenco.size();
     }
     

@@ -39,6 +39,7 @@ public class Estatistica {
 
     public void addGolsSofridos(int golsSofridos) {
         this.golsSofridos += golsSofridos;
+        updateSaldo();
     }
 
     public int getGolsFeitos() {
@@ -47,13 +48,14 @@ public class Estatistica {
 
     public void addGolsFeitos(int golsFeitos) {
         this.golsFeitos += golsFeitos;
+        updateSaldo();
     }
 
     public int getSaldo() {
         return saldo;
     }
 
-    public void updateSaldo() {
+    private void updateSaldo() {
         this.saldo = this.golsFeitos - this.golsSofridos;
     }
 

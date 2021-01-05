@@ -486,13 +486,13 @@ public class Jogar extends javax.swing.JFrame {
         this.lblStaticTitulares.setForeground(foreground);
         this.lblPesquisarJogador.setForeground(foreground);
         this.lblStaticMaxReservas.setForeground(foreground);
-        this.lblStaticMaxTitulares.setForeground(foreground);
-        
-       
+        this.lblStaticMaxTitulares.setForeground(foreground);      
     }
     
     private void initTable() {
         DefaultTableModel table =(DefaultTableModel) this.tableElenco.getModel();
+        this.titulares.removeAll(titulares);
+        this.reservas.removeAll(reservas);
         ArrayList<Jogador> ob = new ArrayList();
         for (int i = 0; i < baseDadosClubes().size(); i++) {
             if (baseDadosClubes().get(i).getNome().equals(this.manager.getClube().getNome())) {
@@ -576,8 +576,8 @@ public class Jogar extends javax.swing.JFrame {
             }  
         this.menuItem.addActionListener((ActionEvent evt) -> {                
             if (this.menuItem.isEnabled()) {
-                if (clube.getNome().equals("Sem Clube")) {
-                    System.out.println("aaa");
+                if (clube.getNome().equals("Sem Club Systeme")) {
+                   
                     String resposta = this.manager.contratarJogadorSemClube(nomeJogador);
                     JOptionPane.showMessageDialog(jframe, resposta);
                 }else {
@@ -669,8 +669,7 @@ public class Jogar extends javax.swing.JFrame {
         if (evt.getButton() == 1) {
             int index = this.tableElenco.getSelectedRow();
             String nomeJogador = (String) this.tableElenco.getValueAt(index, 1);
-            Object state = this.tableElenco.getValueAt(index, 0);
-            System.out.println(index+". "+state +" - "+this.tableElenco.getValueAt(index, 1));
+            Object state = this.tableElenco.getValueAt(index, 0);            
             
             if (state.equals("---")) {
                 if (this.titulares.size() < 11) {
@@ -734,11 +733,13 @@ public class Jogar extends javax.swing.JFrame {
     }//GEN-LAST:event_btnFecharFrameClassificMouseClicked
 
     private void lblStartMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblStartMouseClicked
-        System.out.println(titulares.size());
-        System.out.println(reservas.size());
+        
         if (this.titulares.size() == 11 && this.reservas.size() == 7) {
-            this.dispose();
-            new Partida().setVisible(true);
+            this.setVisible(false);
+       
+            new Partida(this.manager.getClube(), baseDadosClubes().get(0), this).setVisible(true);
+        } else if(this.titulares.size() < 11){
+            JOptionPane.showMessageDialog(this, "Selecione ao menos 11 titulares!", "Alerta!", 0);
         }
     }//GEN-LAST:event_lblStartMouseClicked
     //<editor-fold desc="Variaveis imutaveis">
