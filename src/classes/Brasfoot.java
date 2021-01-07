@@ -1,6 +1,7 @@
 package classes;
 
 import java.awt.Color;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 import views.TelaInicial;
@@ -142,6 +143,12 @@ public class Brasfoot{
     }
     
     private static Clube bayern() {
+        // dever de casa: mudar a instanciação desse objeto para:
+        
+        //Clube bayern = new Clube ("Bayern de Munique");
+        // new Jogador("Manuel", Posicao.GOLEIRO, x, x, x, x, x, bayern);
+        
+        // dever de casa: mudar de array para listas
         Jogador[] elencoBayern = new Jogador[23];
         //new Jogador("Neymar Jr", "Atacante", (ataque)89,(meio) 85,(defesa) 34,(goleiro) 8,(idade) 28);
         elencoBayern[0]  = new Jogador("Manuel Neuer","Goleiro", 5, 8, 40, 90, 34, "Bayern de Munique");
@@ -242,18 +249,28 @@ public class Brasfoot{
         return new Clube("Paris Saint-Germain", elenco, (short)5, 800, "psg.png", 
                 "psg_mini.png", "background_psg.png", Color.white, 4);
     }
-        
+    
+    // evitar metodos estaticos pois vira progrmação procedural
     private static Clube juve() {
+               
         Jogador[] elencoJuve = new Jogador[1];
         //new Jogador("Neymar Jr", "Atacante", (ataque)89,(meio) 85,(defesa) 34,(goleiro) 8,(idade) 28);
         elencoJuve[0] = new Jogador("Szczesny","Goleiro", 5, 8, 40, 85, 30, "FC Barcelona");
        
-        ArrayList<Jogador> elenco = new ArrayList();
+        // usar operador diamente
+        // programar orientado a interfaces
+        List<Jogador> elenco = new ArrayList<>();
         for (int i = 0; i < elencoJuve.length; i++) {
             elenco.add(elencoJuve[i]);
         }
+        
         return new Clube("Juventus FC", elenco, (short)5, 800, "juve.png", 
                 "juve_mini.png", "background_juve.png", Color.white, 0);
+    }
+
+    // metodo de exemplo aletorio
+    public Clube getJogadores(Clube clubes) {
+        // faria alguma programação
     }
     
 //</editor-fold>
