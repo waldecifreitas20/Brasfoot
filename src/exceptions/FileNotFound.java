@@ -9,6 +9,8 @@ package exceptions;
  *
  * @author downt
  */
+// essa classe já existe no java: https://docs.oracle.com/javase/7/docs/api/java/io/FileNotFoundException.html
+// Geralmente se usa o nome da classe + Exception
 public class FileNotFound extends Exception{
 
     public FileNotFound(String message) {
