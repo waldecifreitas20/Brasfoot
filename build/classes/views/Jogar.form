@@ -371,7 +371,7 @@
                 <Component class="javax.swing.JLabel" name="panelPesquisaBackground">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/img/f01.jpg"/>
+                      <Image iconType="3" name="/backgrounds/f01.jpg"/>
                     </Property>
                   </Properties>
                   <Constraints>
@@ -756,7 +756,7 @@
         <Component class="javax.swing.JLabel" name="background">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/img/background_psg.png"/>
+              <Image iconType="3" name="/backgrounds/background_champions.jpg"/>
             </Property>
           </Properties>
           <Constraints>

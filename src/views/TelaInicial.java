@@ -71,8 +71,8 @@ public class TelaInicial extends javax.swing.JFrame {
         });
         getContentPane().add(btnIStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 180, 180, 40));
 
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/tela_inicial.jpg"))); // NOI18N
-        getContentPane().add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/backgrounds/tela_inicial.jpg"))); // NOI18N
+        getContentPane().add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 520, 300));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -86,9 +86,10 @@ public class TelaInicial extends javax.swing.JFrame {
     }//GEN-LAST:event_inputNomeMouseClicked
 
     private void inputNomeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputNomeKeyTyped
-        
-        this.btnIStart.setVisible(true);
-        this.nomeManager = this.inputNome.getText();
+        if (this.inputNome.getText().length() > 0) {
+            this.btnIStart.setVisible(true);
+            this.nomeManager = this.inputNome.getText();
+        }
     }//GEN-LAST:event_inputNomeKeyTyped
 
     private void inputNomeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputNomeKeyPressed

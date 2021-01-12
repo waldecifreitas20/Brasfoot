@@ -1,10 +1,10 @@
 package views;
 
-import static classes.Brasfoot.baseDadosClubes;
-import classes.Clube;
-import classes.Manager;
+import static classes.ClassePrincipal.baseDadosClubes;
+import classes.clube.Clube;
+import classes.clube.Manager;
 import exceptions.FileNotFound;
-import java.util.ArrayList;
+import java.util.List;
 import javax.swing.DefaultListModel;
 
 public class SelecionarEquipe extends javax.swing.JFrame {
@@ -29,7 +29,6 @@ public class SelecionarEquipe extends javax.swing.JFrame {
         lblEmblema = new javax.swing.JLabel();
         btnIniciar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        lblName = new javax.swing.JLabel();
         boxSelectionClub = new javax.swing.JComboBox<>();
         background = new javax.swing.JLabel();
 
@@ -62,12 +61,6 @@ public class SelecionarEquipe extends javax.swing.JFrame {
         jLabel1.setText("Selecione uma equipe");
         telaSelection.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 100, 270, 40));
 
-        lblName.setFont(new java.awt.Font("Dialog", 1, 30)); // NOI18N
-        lblName.setForeground(new java.awt.Color(255, 255, 255));
-        lblName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblName.setText("FC Barcelona");
-        telaSelection.add(lblName, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 50, 340, 40));
-
         boxSelectionClub.setBackground(new java.awt.Color(0, 0, 0));
         boxSelectionClub.setEditable(true);
         boxSelectionClub.setForeground(new java.awt.Color(255, 255, 255));
@@ -78,7 +71,7 @@ public class SelecionarEquipe extends javax.swing.JFrame {
         });
         telaSelection.add(boxSelectionClub, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 210, 240, 30));
 
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/orig_515247.jpg"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/backgrounds/orig_515247.jpg"))); // NOI18N
         telaSelection.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 944, 484));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -107,8 +100,7 @@ public class SelecionarEquipe extends javax.swing.JFrame {
         this.lblEmblema.setIcon(null);
         this.lblEmblema.setText("");
         String item = (String) this.boxSelectionClub.getSelectedItem();
-        ArrayList<Clube> allClubes = baseDadosClubes(); 
-        this.lblName.setText(item);     
+        List<Clube> allClubes = baseDadosClubes();  
        
         for (int i = 0; i < allClubes.size(); i++) {
             if (item.equals(allClubes.get(i).getNome())) 
@@ -143,7 +135,6 @@ public class SelecionarEquipe extends javax.swing.JFrame {
     private javax.swing.JButton btnIniciar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lblEmblema;
-    private javax.swing.JLabel lblName;
     private javax.swing.JPanel telaSelection;
     // End of variables declaration//GEN-END:variables
 }

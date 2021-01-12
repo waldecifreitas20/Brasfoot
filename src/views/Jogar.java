@@ -1,20 +1,23 @@
 package views;
 
-import classes.BaseClube;
-import static classes.Brasfoot.baseDadosClubes;
-import static classes.Brasfoot.baseDadosJogadores;
-import static classes.Brasfoot.getJogador;
-import classes.Calendario;
-import classes.Clube;
-import classes.Jogador;
-import classes.Manager;
-import classes.SemClube;
-import classes.Tabela;
+import classes.clube.BaseClube;
+import static classes.ClassePrincipal.baseDadosClubes;
+import static classes.ClassePrincipal.baseDadosJogadores;
+import static classes.ClassePrincipal.getJogador;
+import classes.competicoes.Calendario;
+import classes.clube.Clube;
+import classes.competicoes.Confronto;
+import classes.clube.Jogador;
+import classes.clube.Manager;
+import classes.clube.SemClube;
+import classes.competicoes.Tabela;
+import classes.competicoes.SuperLiga;
 import java.awt.Color;
 import java.awt.MouseInfo;
 import java.awt.event.ActionEvent;
 import static java.lang.System.exit;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -36,6 +39,8 @@ public class Jogar extends javax.swing.JFrame {
             reservas = new ArrayList();
     private Tabela 
             tableClassific = new Tabela(baseDadosClubes()) ;
+    private SuperLiga supeLiga = new SuperLiga(baseDadosClubes());
+    private Clube mandante, visitante;
     
     public Jogar(Manager manager) {
         initComponents();        
@@ -45,6 +50,7 @@ public class Jogar extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);       
         initAssets();
         initTable();
+        //loadRodada();
         this.tableElenco.setAutoCreateRowSorter(true);
         this.tabelaPesquisa.setAutoCreateRowSorter(true);
         initPopupMenuElenco(this);        
@@ -242,7 +248,7 @@ public class Jogar extends javax.swing.JFrame {
         });
         painelPesquisa.add(btnFecharJanela, new org.netbeans.lib.awtextra.AbsoluteConstraints(850, 20, -1, -1));
 
-        panelPesquisaBackground.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/f01.jpg"))); // NOI18N
+        panelPesquisaBackground.setIcon(new javax.swing.ImageIcon(getClass().getResource("/backgrounds/f01.jpg"))); // NOI18N
         painelPesquisa.add(panelPesquisaBackground, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 910, 480));
 
         javax.swing.GroupLayout framePesquisaLayout = new javax.swing.GroupLayout(framePesquisa.getContentPane());
@@ -447,7 +453,7 @@ public class Jogar extends javax.swing.JFrame {
         lblManager.setText("Manager");
         home.add(lblManager, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 80, 130, 20));
 
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/background_psg.png"))); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/backgrounds/background_champions.jpg"))); // NOI18N
         home.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1200, 610));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -465,7 +471,7 @@ public class Jogar extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
     private void initAssets(){    
-        Color foreground = manager.getClube().getFOREGROUND();
+        Color foreground = manager.getClube().getForeground();
         this.data = new Calendario().getDataAtual();
         this.lblData.setText(data);
         this.lblData.setForeground(foreground);
@@ -493,10 +499,10 @@ public class Jogar extends javax.swing.JFrame {
         DefaultTableModel table =(DefaultTableModel) this.tableElenco.getModel();
         this.titulares.removeAll(titulares);
         this.reservas.removeAll(reservas);
-        ArrayList<Jogador> ob = new ArrayList();
+        List<Jogador> ob = new ArrayList();
         for (int i = 0; i < baseDadosClubes().size(); i++) {
             if (baseDadosClubes().get(i).getNome().equals(this.manager.getClube().getNome())) {
-                ob = baseDadosClubes().get(i).getElenco();
+                ob = baseDadosClubes().get(i).getJogadores();
             }
         }      
         table.setRowCount(0);
@@ -569,7 +575,7 @@ public class Jogar extends javax.swing.JFrame {
         this.menuItem = new JMenuItem("Contratar");
         this.menuItem.getAccessibleContext().setAccessibleDescription("Contratar");                   
        
-        for (int i = 0; i < this.manager.getClube().getElenco().size(); i++) { 
+        for (int i = 0; i < this.manager.getClube().getJogadores().size(); i++) { 
                 if(clube.getNome() == this.manager.getClube().getNome()) {
                     this.menuItem.setEnabled(false);                 
                 }               
@@ -602,6 +608,26 @@ public class Jogar extends javax.swing.JFrame {
         this.menuPopupPesquisa.removeAll();
         this.menuPopupPesquisa.add(menuItem);
     }        
+        
+    private void loadRodada() {
+     /*
+        this.supeLiga.sortearRodada();
+        for (int i = 0; i < 3; i++) {
+          
+            Clube mandante = this.supeLiga.getRodada()[i].getMandante();
+            Clube visitante = this.supeLiga.getRodada()[i].getVisitante();
+            if (this.manager.getClube().equals(mandante)) {               
+                this.mandante = this.manager.getClube();
+                this.visitante = visitante;             
+            } else if (this.manager.getClube().equals(visitante)) {
+                this.mandante = mandante;
+                this.visitante = this.manager.getClube();
+              
+            }
+        }
+      
+       */
+    }
             
     private void btnFecharJanelaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnFecharJanelaMouseClicked
         this.framePesquisa.setVisible(false);
@@ -620,7 +646,7 @@ public class Jogar extends javax.swing.JFrame {
         DefaultTableModel table = (DefaultTableModel) this.tabelaPesquisa.getModel();       
         table.setRowCount(0);
         String nome = this.inputNomeJogador.getText().trim();
-        ArrayList<Jogador> all = baseDadosJogadores();
+        List<Jogador> all = baseDadosJogadores();
         for (int i = 0; i < all.size(); i++) {
             if (all.get(i).getNome().indexOf(nome) != -1) {
                 
@@ -652,7 +678,7 @@ public class Jogar extends javax.swing.JFrame {
                 }        
             }
             if (clube == null) {
-                clube = new SemClube("Sem Clube");
+                clube = new SemClube();
             }
             initPopupMenuPesquisar(this, clube, nomeJogador);
             this.menuPopupPesquisa.show(this, posicX-85, posicY-60);
@@ -710,7 +736,7 @@ public class Jogar extends javax.swing.JFrame {
         DefaultTableModel table = (DefaultTableModel) this.tabelaClassificacao.getModel();
         table.setRowCount(0);
         this.frameClassificacao.setVisible(true);
-        ArrayList<Clube> clubesStats = this.tableClassific.getParticipantes();
+        List<Clube> clubesStats = this.tableClassific.getParticipantes();
         for (int i = 0; i < baseDadosClubes().size(); i++) {
             Object[] tabela = {
                 i+1,
@@ -734,14 +760,21 @@ public class Jogar extends javax.swing.JFrame {
 
     private void lblStartMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblStartMouseClicked
         
-        if (this.titulares.size() == 11 && this.reservas.size() == 7) {
-            this.setVisible(false);
-       
-            new Partida(this.manager.getClube(), baseDadosClubes().get(0), this).setVisible(true);
+        if (this.titulares.size() == 11) {
+            this.loadRodada();
+            if (this.mandante == null || this.visitante == null) {
+                this.setVisible(false);
+                System.out.println("deu merda aqui krl");
+            } else {
+               
+                new Partida(this.mandante, this.visitante, this).setVisible(true);
+                
+            }
         } else if(this.titulares.size() < 11){
             JOptionPane.showMessageDialog(this, "Selecione ao menos 11 titulares!", "Alerta!", 0);
         }
     }//GEN-LAST:event_lblStartMouseClicked
+    
     //<editor-fold desc="Variaveis imutaveis">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel background;

@@ -1,8 +1,8 @@
 
 package views;
 
-import static classes.Brasfoot.baseDadosClubes;
-import classes.Clube;
+import static classes.ClassePrincipal.baseDadosClubes;
+import classes.clube.Clube;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -22,8 +22,7 @@ public class Partida extends javax.swing.JFrame {
         this.visitante = visitante;
         btnPause.setVisible(false);
         initAssets();
-        iniciarPartida();
-        
+        iniciarPartida();        
     }
     
     @SuppressWarnings("unchecked")
