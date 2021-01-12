@@ -16,16 +16,20 @@ public class Clube extends BaseClube{
     private final int id,relevancia;    
     private final Color FOREGROUND;
     private final ImageIcon BACKGROUND,EMBLEMA,EMBLEMA_MINE;     
-    private Estatistica stats;    
+    private Estatistica stats;   
+    //declarar variaveis uma por linha
+    //usar nomes de variaveis/metodos/classes em uma unica lingua
     private double dinheiro,gastos,over,forcaAtaque,forcaDefesa;    
     private List<Jogador> reservas,titulares;   
     private List<Clube> timesEnfrentados;
     //</editor-fold>
     
+    
+    //pensar em ter metodos com menos parametros
     public Clube(String nome, List<Jogador> elenco, short relevancia, 
             double dinheiro, String EMBLEMA, String EMBLEMAPequeno, 
             String BACKGROUND, Color foreground, int id ) {
-        super(nome, elenco);      
+        super(nome, elenco);
         this.reservas = new ArrayList<>();
         this.titulares = new ArrayList<>();
         this.timesEnfrentados = new ArrayList<>();
@@ -44,11 +48,27 @@ public class Clube extends BaseClube{
     //<editor-fold desc=" Métodos internos">
     private ImageIcon getBACKGROUND(String arq) {
        ImageIcon BACKGROUND;
-        try {           
+        try {
+            //sempre uso o caminho absoluto
             BACKGROUND = new ImageIcon(getClass().getResource("../../BACKGROUNDs/"+arq));
             return BACKGROUND;
         } catch (Exception ex) {
             ex.printStackTrace();
+            return null;
+        }   
+    }
+    
+    private ImageIcon getImagemDoClube(String arq, String tipo_de_imagem) {
+       ImageIcon BACKGROUND;
+        try {
+            //sempre uso o caminho absoluto
+            //File.separator
+            BACKGROUND = new ImageIcon(getClass().getResource("../../"+tipo_de_imagem+"/"+arq));
+            return BACKGROUND;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            //lembre-se sempre: nunca retorne nulos; retorne objetos.
+            //nesse caso, seria uma exceção (FileNotFound / FileNotFoundException)
             return null;
         }   
     }
@@ -75,27 +95,32 @@ public class Clube extends BaseClube{
         }       
     }
     
+    //pensar em nomes de metodos mais descritivos
+    //private void calcularPontuacaoDoClube
     private void calcOver() {
         double forca = 0, ataque = 0, defesa = 0;
         int qtdAtq = 0, qtdDef = 0;
         
         for (int i = 0; i < getJogadores().size(); i++) {
-            forca += getJogadores().get(i).getOver();
-            if (getJogadores().get(i).getPosicao().equals("Atacante")) {                
+            Jogador jogador = getJogadores().get(i);
+            
+            forca += jogador.getOver();
+            
+            if (jogador.getPosicao().equals("Atacante")) {                
                 qtdAtq++;
-                ataque += (double)(getJogadores().get(i).getHabilidades().getATAQUE()*10 + getJogadores().get(i).getHabilidades().getMEIO()*0.5)/10;
+                ataque += calcularHabilidadeAtacante(jogador);
             }
-            if (getJogadores().get(i).getPosicao().equals("Meio-Campo")) {
+            if (jogador.getPosicao().equals("Meio-Campo")) {
                 qtdAtq++;
-                ataque += (double)(getJogadores().get(i).getHabilidades().getATAQUE()*0.5 + getJogadores().get(i).getHabilidades().getMEIO()*10)/10;
+                ataque += (double)(jogador.getHabilidades().getATAQUE()*0.5 + jogador.getHabilidades().getMEIO()*10)/10;
             }
-            if (getJogadores().get(i).getPosicao().equals("Defensor")) {
+            if (jogador.getPosicao().equals("Defensor")) {
                 qtdDef++;
-                defesa += (double)(getJogadores().get(i).getHabilidades().getDEFESA()*10 + getJogadores().get(i).getHabilidades().getMEIO())/10;
+                defesa += (double)(jogador.getHabilidades().getDEFESA()*10 + jogador.getHabilidades().getMEIO())/10;
             }
-            if (getJogadores().get(i).getPosicao().equals("Goleiro")) {
+            if (jogador.getPosicao().equals("Goleiro")) {
                 qtdDef++;                
-                defesa += getJogadores().get(i).getHabilidades().getGOLEIRO();
+                defesa += jogador.getHabilidades().getGOLEIRO();
             }
           
         }
@@ -104,6 +129,11 @@ public class Clube extends BaseClube{
         this.over = forca/this.jogadores.size();
     }
     
+    private double calcularHabilidadeAtacante(Jogador jogador){
+        return (double)(jogador.getHabilidades().getATAQUE()*10 + jogador.getHabilidades().getMEIO()*0.5)/10;
+    }
+
+
     private void initGastos() {
         this.gastos = 0;
         for (int i = 0; i < getJogadores().size(); i++) {
@@ -197,12 +227,18 @@ public class Clube extends BaseClube{
         }
     }
     
-    public String analisarProposta(double oferta, Jogador jogador) {
+    private void valeApenaProposta(double oferta, Jogador jogador) {
         double taxa = this.over - jogador.getOver();
-        if(taxa > 10 && jogador.getValor()*0.9 < oferta) {              
-            return "true";
-        }else if((taxa < 10 || taxa < 0) && jogador.getValor()*1.3 < oferta){
-            return "true";
+        return taxa > 10 && jogador.getValor()*0.9 < oferta || (taxa < 10 || taxa < 0) && jogador.getValor()*1.3 < oferta;
+    }
+        
+    
+    //chamar esse metodo uma linha antes do JOptionPane 
+    //depois que tiver o resultado, passar pro JOptionPane...
+    public Proposta analisarProposta(double oferta, Jogador jogador) {
+        if(valeApenaProposta(oferta, jogador)) {              
+            // se voltar esse codigo assim, ta reprovado!
+            return new Proposta (true);
         }else {
             double contraProposta;        
             if (taxa > 10) {
@@ -210,7 +246,8 @@ public class Clube extends BaseClube{
             } else {
                 contraProposta = jogador.getValor()*1.3;
             }
-            return " não aceita menos que " + ((int)contraProposta+1) + " Mi \npelo " +jogador.getNome();
+            return new Proposta (false, contraProposta+1, jogador);
+            //return " não aceita menos que " + ((int)contraProposta+1) + " Mi \npelo " +jogador.getNome();
         }
     }
     
