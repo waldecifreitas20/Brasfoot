@@ -1,15 +1,10 @@
 package views;
 
-import classes.clube.BaseClube;
-import static classes.ClassePrincipal.baseDadosClubes;
-import static classes.ClassePrincipal.baseDadosJogadores;
-import static classes.ClassePrincipal.getJogador;
-import classes.competicoes.Calendario;
-import classes.clube.Clube;
-import classes.competicoes.Confronto;
-import classes.clube.Jogador;
-import classes.clube.Manager;
-import classes.clube.SemClube;
+import static classes.ClassePrincipal.clubsDataBase;
+import classes.club.BaseClub;
+import classes.club.Club;
+import classes.club.Manager;
+import classes.competicoes.Schedule;
 import classes.competicoes.Tabela;
 import classes.competicoes.SuperLiga;
 import java.awt.Color;
@@ -38,8 +33,8 @@ public class Jogar extends javax.swing.JFrame {
             titulares = new ArrayList(),
             reservas = new ArrayList();
     private Tabela 
-            tableClassific = new Tabela(baseDadosClubes()) ;
-    private SuperLiga supeLiga = new SuperLiga(baseDadosClubes());
+            tableClassific = new Tabela(clubsDataBase()) ;
+    private SuperLiga supeLiga = new SuperLiga(clubsDataBase());
     private Clube mandante, visitante;
     
     public Jogar(Manager manager) {
@@ -55,8 +50,8 @@ public class Jogar extends javax.swing.JFrame {
         this.tabelaPesquisa.setAutoCreateRowSorter(true);
         initPopupMenuElenco(this);        
         initMoney();
-        JOptionPane.showMessageDialog(this, "Seja bem vindo ao "+ this.manager.getClube().getNome()+ ","
-                + " " +this.manager.getNome()+
+        JOptionPane.showMessageDialog(this, "Seja bem vindo ao "+ this.manager.getClube().getName()+ ","
+                + " " +this.manager.getName()+
                ".\nAcreditamos que você possa levar esse grande clube"
                        + "\nao titulo dessa temporada. Boa sorte!"
                        + "\n\n              Atenciosamente, a diretoria.", "Boas Vindas!", 1
@@ -472,15 +467,15 @@ public class Jogar extends javax.swing.JFrame {
     
     private void initAssets(){    
         Color foreground = manager.getClube().getForeground();
-        this.data = new Calendario().getDataAtual();
+        this.data = new Schedule().getDataAtual();
         this.lblData.setText(data);
         this.lblData.setForeground(foreground);
-        this.lblTitle.setText(manager.getClube().getNome());
+        this.lblTitle.setText(manager.getClube().getName());
         this.lblStart.setForeground(foreground);
         this.lblTitle.setForeground(foreground);
         this.lblMoney.setForeground(foreground);
         this.staticLBL.setForeground(foreground);
-        this.lblManager.setText(manager.getNome());
+        this.lblManager.setText(manager.getName());
         this.lblManager.setForeground(foreground);
         this.background.setIcon(manager.getClube().getBackground());
         this.lblEmblema.setIcon(manager.getClube().getEmblemaMini());
@@ -500,9 +495,9 @@ public class Jogar extends javax.swing.JFrame {
         this.titulares.removeAll(titulares);
         this.reservas.removeAll(reservas);
         List<Jogador> ob = new ArrayList();
-        for (int i = 0; i < baseDadosClubes().size(); i++) {
-            if (baseDadosClubes().get(i).getNome().equals(this.manager.getClube().getNome())) {
-                ob = baseDadosClubes().get(i).getJogadores();
+        for (int i = 0; i < clubsDataBase().size(); i++) {
+            if (clubsDataBase().get(i).getName().equals(this.manager.getClube().getName())) {
+                ob = clubsDataBase().get(i).getJogadores();
             }
         }      
         table.setRowCount(0);
@@ -510,7 +505,7 @@ public class Jogar extends javax.swing.JFrame {
             Jogador um = ob.get(i);            
             Object[] club = {
                 "---",
-                um.getNome(),
+                um.getName(),
                 (int) um.getOver(), 
                 um.getPosicao(), 
                 (int)um.getValor()+"Mi", 
@@ -559,7 +554,7 @@ public class Jogar extends javax.swing.JFrame {
             if (resp == 0) {
                 Jogador jogador = getJogador((String) this.tableElenco.getValueAt(index, 1));
                 String clube = this.manager.venderJogador(nomeJogador);
-                JOptionPane.showMessageDialog(jframe, jogador.getNome()+" foi vendido para "+clube
+                JOptionPane.showMessageDialog(jframe, jogador.getName()+" foi vendido para "+clube
                         +" por "+ (int)(jogador.getValor()*1.3)+" Milhões");
                 initTable();
                 initMoney();
@@ -570,19 +565,19 @@ public class Jogar extends javax.swing.JFrame {
         //</editor-fold>
     }
     
-    private void initPopupMenuPesquisar(JFrame jframe, BaseClube clube, String nomeJogador) {
+    private void initPopupMenuPesquisar(JFrame jframe, BaseClub clube, String nomeJogador) {
         //Comprar Jogador//        
         this.menuItem = new JMenuItem("Contratar");
         this.menuItem.getAccessibleContext().setAccessibleDescription("Contratar");                   
        
         for (int i = 0; i < this.manager.getClube().getJogadores().size(); i++) { 
-                if(clube.getNome() == this.manager.getClube().getNome()) {
+                if(clube.getName() == this.manager.getClube().getName()) {
                     this.menuItem.setEnabled(false);                 
                 }               
             }  
         this.menuItem.addActionListener((ActionEvent evt) -> {                
             if (this.menuItem.isEnabled()) {
-                if (clube.getNome().equals("Sem Club Systeme")) {
+                if (clube.getName().equals("Sem Club")) {
                    
                     String resposta = this.manager.contratarJogadorSemClube(nomeJogador);
                     JOptionPane.showMessageDialog(jframe, resposta);
@@ -648,10 +643,10 @@ public class Jogar extends javax.swing.JFrame {
         String nome = this.inputNomeJogador.getText().trim();
         List<Jogador> all = baseDadosJogadores();
         for (int i = 0; i < all.size(); i++) {
-            if (all.get(i).getNome().indexOf(nome) != -1) {
+            if (all.get(i).getName().indexOf(nome) != -1) {
                 
                 Object[] jogadores = {
-                    all.get(i).getNome(), 
+                    all.get(i).getName(), 
                     all.get(i).getStatus(), 
                     all.get(i).getPosicao(),
                     (int)all.get(i).getOver(),
@@ -672,9 +667,9 @@ public class Jogar extends javax.swing.JFrame {
             String nomeClube = (String) this.tabelaPesquisa.getValueAt(this.tabelaPesquisa.getSelectedRow(), 1);
             BaseClube clube = null;
             
-            for (int i = 0; i < baseDadosClubes().size(); i++) {
-                if (nomeClube.equals(baseDadosClubes().get(i).getNome())) {
-                    clube = baseDadosClubes().get(i);
+            for (int i = 0; i < clubsDataBase().size(); i++) {
+                if (nomeClube.equals(clubsDataBase().get(i).getName())) {
+                    clube = clubsDataBase().get(i);
                 }        
             }
             if (clube == null) {
@@ -736,11 +731,11 @@ public class Jogar extends javax.swing.JFrame {
         DefaultTableModel table = (DefaultTableModel) this.tabelaClassificacao.getModel();
         table.setRowCount(0);
         this.frameClassificacao.setVisible(true);
-        List<Clube> clubesStats = this.tableClassific.getParticipantes();
-        for (int i = 0; i < baseDadosClubes().size(); i++) {
+        List<Club> clubesStats = this.tableClassific.getParticipantes();
+        for (int i = 0; i < clubsDataBase().size(); i++) {
             Object[] tabela = {
                 i+1,
-                clubesStats.get(i).getNome(),
+                clubesStats.get(i).getName(),
                 clubesStats.get(i).getStats().getPontos(),
                 clubesStats.get(i).getStats().getJogos(),
                 clubesStats.get(i).getStats().getVitorias(),
