@@ -69,8 +69,7 @@ public class StartScreen extends javax.swing.JFrame {
 
     private void initBackground() {      
         String url = "/images/backgrounds/background StartScreen.jpg";
-        ImageIcon background = new ImageIcon(getClass().getResource(url));
-        System.out.println(background);
+        ImageIcon background = new ImageIcon(getClass().getResource(url));        
         this.background.setIcon(background);
     }
     private void lblSairMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblSairMouseClicked

@@ -37,8 +37,8 @@ public class Club extends BaseClub{
         calculateTeamPower(); 
         this.FOREGROUND = foreground;
         try {
-            this.EMBLEM = getImage("backgrounds/" , this.name+" Big",".png"); 
-            this.BACKGROUND = getImage("emblems/", "background "+this.name, ".png");             
+            this.EMBLEM = getImage("emblems/" , this.name+" Big",".png"); 
+            this.BACKGROUND = getImage("backgrounds/", "background "+this.name, ".png");             
             this.EMBLEM_SMALL = getImage("emblems/", this.name+" Small", ".png"); 
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
@@ -49,15 +49,13 @@ public class Club extends BaseClub{
     //<editor-fold desc=" Métodos internos">
     private ImageIcon getImage(String folder, String fileName, String format) 
             throws FileNotFoundException {
-            File archive = new File("/images/"+folder+fileName+format);       
-        try {           
-            System.out.println(archive.getAbsolutePath());
-            return new ImageIcon(getClass().getResource(""));
-            
+            String url = "/images/"+folder+fileName+format;            
+        try {    
+            return new ImageIcon(getClass().getResource(url));            
         } catch (Exception ex) {
             ex.printStackTrace();
             String message = "Nao foi possivel encontrar o arquivo no "
-                    + "caminho '"+archive.getAbsolutePath()+"'";;
+                    + "caminho '"+url+"'";;
             throw new FileNotFoundException(message); 
         }   
     }    
@@ -113,14 +111,16 @@ public class Club extends BaseClub{
     
     private boolean responseClub(double offer, double fee, Player player) {       
         boolean firstCondition = fee > 10 && player.getMarketValue()*0.9 < offer;
-        boolean secondCondition = (fee < 10 || fee < 0) && player.getMarketValue()*1.3 < offer;
+        boolean secondCondition = fee < 10 && player.getMarketValue()*1.3 < offer;
+        boolean thirdCondition = fee < 10 && player.getMarketValue()*1.8 < offer;
         
-        return firstCondition || secondCondition;
+        return firstCondition || secondCondition || thirdCondition;
     }
     
     private boolean transferIsPossible(double offer, Player player) {
         return this.money > offer && (this.money-offer) > player.getSalary();
     }
+   
     private NegotiationResponse analyzerProposalByPlayer(double offer, Player player) {
         
         double fee = this.power - player.getOverall();
@@ -152,7 +152,10 @@ public class Club extends BaseClub{
         return BACKGROUND;
     }
 
-    public ImageIcon getEmblemBig() {
+    public ImageIcon getEmblemBig() throws NullPointerException {
+        if (this.EMBLEM == null) {
+            throw new NullPointerException("variavel 'EMBLEM' == 'null'");
+        }
         return EMBLEM;
     }
 
@@ -350,7 +353,7 @@ public class Club extends BaseClub{
             return response;
         }
 
-        public boolean isResponse() {
+        private boolean isResponse() {
             return responseBoolean;
         }
         

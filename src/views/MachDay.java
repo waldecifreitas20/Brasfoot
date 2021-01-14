@@ -1,20 +1,19 @@
-
+/*
 package views;
 
-import static classes.ClassePrincipal.baseDadosClubes;
-import classes.clube.Clube;
+import classes.club.Club;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.JFrame;
 
-public class Partida extends javax.swing.JFrame {
-    private Clube mandante, visitante;
+public class MachDay extends javax.swing.JFrame {
+    private Club mandante, visitante;
     private Timer cronometro = new Timer();
     private boolean pausado = false;
     private final JFrame telaInicial;
     
-    public Partida(Clube mandante, Clube visitante, JFrame telaInicial) {
+    public MachDay(Club mandante, Club visitante, JFrame telaInicial) {
         initComponents();
         this.telaInicial = telaInicial;
         this.telaInicial.setVisible(false);
@@ -342,3 +341,4 @@ public class Partida extends javax.swing.JFrame {
     private javax.swing.JList<String> listTitulares;
     // End of variables declaration//GEN-END:variables
 }
+*/

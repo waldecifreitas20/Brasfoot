@@ -1,24 +1,23 @@
 package views;
 
 import static classes.ClassePrincipal.clubsDataBase;
+import static classes.ClassePrincipal.getClub;
 import classes.club.Club;
 import classes.club.Manager;
-import java.io.FileNotFoundException;
-import java.util.List;
-import javax.swing.DefaultListModel;
+import exceptions.ObjectNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 
 public class TeamChoice extends javax.swing.JFrame {
     private final String managerName;
     private Club club;
     public TeamChoice(String managerName) {
         initComponents();  
+        initTeamsList();
+        initBackground();
         this.managerName = managerName;
-        this.setLocationRelativeTo(null);
-        DefaultListModel model = new DefaultListModel();
-       
-        for (int i = 0; i < clubsDataBase().size(); i++) {
-            this.boxSelectionClub.addItem(clubsDataBase().get(i).getName());
-        }               
+        this.setLocationRelativeTo(null);                 
     }
     
     @SuppressWarnings("unchecked")
@@ -87,45 +86,41 @@ public class TeamChoice extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
+    private void initBackground() {
+        String url = "/images/backgrounds/background TeamChoice.jpg";
+        ImageIcon background = new ImageIcon(getClass().getResource(url));
+        this.background.setIcon(background);
+    }
+    
+    private void initTeamsList() {
+        for (int i = 0; i < clubsDataBase().size(); i++) {
+            String clubName = clubsDataBase().get(i).getName();
+            this.boxSelectionClub.addItem(clubName);
+        } 
+    }
+    
     private void btnStartGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartGameActionPerformed
-        Manager manager = new Manager(this.managerName, this.);
+        Manager manager = new Manager(this.managerName, this.club);
         this.dispose();
-        new Jogar(manager).setVisible(true);
+        new ClubManagement(manager).setVisible(true);
     }//GEN-LAST:event_btnStartGameActionPerformed
 
     private void boxSelectionClubActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boxSelectionClubActionPerformed
         this.lblEmblem.setIcon(null);
-        this.lblEmblem.setText("");
+        //this.lblEmblem.setText("");
         String item = (String) this.boxSelectionClub.getSelectedItem();
-        List<Club> allClubs = clubsDataBase();  
-       
-        for (int i = 0; i < allClubs.size(); i++) {
-            if (item.equals(allClubs.get(i).getName())) 
-                if (allClubs.get(i).getEmblemBig() == null) {
-                    try {
-                        throw new FileNotFoundException("nenhum arquivo encontrado");
-                    } catch(FileNotFoundException ex) {
-                        ex.printStackTrace();
-                        this.lblEmblem.setText("Arquivo não encontrado");
-                    }                    
-                } else {
-                    this. = allClubs.get(i);
-                    this.lblEmblem.setIcon(allClubs.get(i).getEmblem());                    
-                }           
-        }
-        
-        
+        Club club;    
+        try {
+            club = getClub(item);         
+            this.lblEmblem.setIcon(club.getEmblemBig());
+            this.club = club;
+        } catch (ObjectNotFoundException | NullPointerException ex) {
+            Logger.getLogger(TeamChoice.class.getName()).log(Level.SEVERE, null, ex);
+            this.lblEmblem.setText("Arquivo não encontrado");
+        }       
     }//GEN-LAST:event_boxSelectionClubActionPerformed
 
-    public static void main(String args[]) {
-        
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new TeamChoice("aa").setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel background;
