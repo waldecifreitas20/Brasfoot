@@ -21,7 +21,7 @@ public class Club extends BaseClub{
     private Statistic stats;    
     private double money, costs, power, attackPower, defensePower;    
     private List<Player> substitutes, startingPlayers;   
-    private List<Club> confrontedTeams;
+    
     //</editor-fold>
     
     public Club(String name, List<Player> cast, 
@@ -29,7 +29,7 @@ public class Club extends BaseClub{
         super(name, cast);         
         this.substitutes = new ArrayList<>();
         this.startingPlayers = new ArrayList<>();
-        this.confrontedTeams = new ArrayList<>(); 
+    
         this.stats = new Statistic();        
         this.money = money;
         initCosts();           
@@ -199,12 +199,13 @@ public class Club extends BaseClub{
         return startingPlayers;
     }
 
-    public List<Club> getConfrontedTeams() {
-        return confrontedTeams;    }
-     
     //</editor-fold>
     
     //Metodos Publicos//    
+    public boolean notPlayed(Club rival) {
+        return !this.stats.getClubsPlayed().contains(rival);
+    }
+    
     public void breakContract(Player player) 
             throws ObjectNotFoundException {
         

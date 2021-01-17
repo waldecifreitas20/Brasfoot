@@ -9,11 +9,14 @@ import classes.club.FreePlayer;
 import classes.club.Player;
 import classes.club.Player.Ability;
 import classes.club.Player.Position;
+import classes.competicoes.SuperChampions;
 import exceptions.InvalidValueException;
 import exceptions.ObjectNotFoundException;
-import views.StartScreen;
-
-
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class MainClass{   
     
@@ -23,9 +26,39 @@ public class MainClass{
     public static int ADD = 1;
     public static int REMOVE = 0;
     
-    public static void main(String[] args) {  
-       new StartScreen().setVisible(true);
-      
+    public static void main(String[] args) throws IOException {  
+        SuperChampions sc = new SuperChampions(allClubs);
+        sc.list();
+      /*  List<String> matchs = new ArrayList<>();
+        do {
+            String game = sc.drawRound();
+            if (!game.equals("")) {
+                matchs.add(game);
+            }
+        } while (matchs.size() < 30);
+        
+        File root = new File("");
+        String relativePath = "/src/classes/rounds.txt";
+        Path dir = Paths.get(root.getAbsolutePath()+relativePath);
+        String times[] = new String[2];
+        String game = null;
+        try {
+            List<String> readAllLines = Files.readAllLines(dir);
+            int index = 0;
+            while(index < readAllLines.size()) {
+                if (readAllLines.get(index).contains("Bayern")) {
+                    game = (readAllLines.get(index).toUpperCase());                   
+                    break;
+                }
+                index++;
+            }
+            times = game.split("&");
+            System.out.println(times[0]+ " x "+ times[1]);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+ */
+     
     }
     public static List<Club> clubsDataBase() {
         return allClubs;

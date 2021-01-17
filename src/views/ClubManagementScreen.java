@@ -44,7 +44,8 @@ public class ClubManagementScreen extends javax.swing.JFrame {
     private Club homeTeam, awayTeam;
     
     public ClubManagementScreen(Manager manager) {
-        initComponents();        
+        initComponents();      
+        this.superChampions.loadAllRounds();
         this.manager = manager;
         this.frameLeaderboard.setVisible(false);
         this.frameSearch.setVisible(false);         

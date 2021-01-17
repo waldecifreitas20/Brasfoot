@@ -28,6 +28,7 @@ public class Statistic {
         this.goalsConceded = 0;
     }
 
+    
     public int getPoints() {
         return points;
     }
