@@ -1,7 +1,7 @@
 package views;
 
-import static classes.ClassePrincipal.clubsDataBase;
-import static classes.ClassePrincipal.getClub;
+import static classes.MainClass.clubsDataBase;
+import static classes.MainClass.getClub;
 import classes.club.Club;
 import classes.club.Manager;
 import exceptions.ObjectNotFoundException;

@@ -1,9 +1,9 @@
 package classes.club;
 
-import static classes.ClassePrincipal.ADD;
-import static classes.ClassePrincipal.clubsDataBase;
-import static classes.ClassePrincipal.updateDataBase;
-import static classes.ClassePrincipal.updateFreePlayer;
+import static classes.MainClass.ADD;
+import static classes.MainClass.clubsDataBase;
+import static classes.MainClass.updateDataBase;
+import static classes.MainClass.updateFreePlayer;
 import classes.club.Player.Ability;
 import exceptions.InvalidValueException;
 import exceptions.ObjectNotFoundException;

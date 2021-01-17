@@ -15,7 +15,7 @@ import views.StartScreen;
 
 
 
-public class ClassePrincipal{   
+public class MainClass{   
     
     private static List<Club> allClubs = initClubs();   
     private static List<Player> allPlayers = initPlayers();    

@@ -1,8 +1,8 @@
 package views;
 
-import static classes.ClassePrincipal.clubsDataBase;
-import static classes.ClassePrincipal.getPlayer;
-import static classes.ClassePrincipal.playersDataBase;
+import static classes.MainClass.clubsDataBase;
+import static classes.MainClass.getPlayer;
+import static classes.MainClass.playersDataBase;
 import classes.club.BaseClub;
 import classes.club.Club;
 import classes.club.FreePlayer;
