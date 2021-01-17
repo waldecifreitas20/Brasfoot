@@ -1,10 +1,7 @@
 package classes.club;
 
-import static classes.ClassePrincipal.getPlayer;
 import exceptions.InvalidValueException;
 import exceptions.ObjectNotFoundException;
-
-
 
 public class Manager {
     private final String name; 
@@ -16,7 +13,7 @@ public class Manager {
     }
     
     public Club.NegotiationResponse negotiateWithFreePlayer(Player player) 
-            throws ObjectNotFoundException, InvalidValueException {
+            throws ObjectNotFoundException {
         
         return this.club.negotiateWithFreePlayer(player);  
     } 
@@ -28,7 +25,7 @@ public class Manager {
     }
     
     public void LetFreePlayer(Player player) 
-            throws ObjectNotFoundException, InvalidValueException {    
+            throws ObjectNotFoundException{    
         
         this.club.breakContract(player);
     } 

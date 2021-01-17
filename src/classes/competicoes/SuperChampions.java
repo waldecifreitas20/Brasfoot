@@ -15,10 +15,13 @@ public class SuperChampions {
         this.availableTeam = new Stack<>();
         this.round = new ArrayList<>();
         this.matchRecord = new ArrayList<>();
+    }   
+
+    public List<Match> drawRound() {
+        
+        return this.round;
     }
     
-    
-
     public List<Club> getParticipants() {
         return participants;
     }
@@ -34,8 +37,4 @@ public class SuperChampions {
     public List<Match> getMatchRecord() {
         return matchRecord;
     }
-    
-    
-    
-
 }

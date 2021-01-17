@@ -80,7 +80,7 @@ public class StartScreen extends javax.swing.JFrame {
         if (this.nameInput.getText().length() > 0) {           
             this.managerName = this.nameInput.getText();
             this.dispose();
-            new TeamChoice(this.managerName).setVisible(true);
+            new TeamChoiceScreen(this.managerName).setVisible(true);
         } else {
             JOptionPane.showMessageDialog(this, "Nome inválido", "Alerta!", 0);
         }

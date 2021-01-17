@@ -1,5 +1,9 @@
 package classes;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+
 import classes.club.Club;
 import classes.club.FreePlayer;
 import classes.club.Player;
@@ -7,10 +11,9 @@ import classes.club.Player.Ability;
 import classes.club.Player.Position;
 import exceptions.InvalidValueException;
 import exceptions.ObjectNotFoundException;
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
 import views.StartScreen;
+
+
 
 public class ClassePrincipal{   
     
@@ -21,9 +24,8 @@ public class ClassePrincipal{
     public static int REMOVE = 0;
     
     public static void main(String[] args) {  
-        
-        new StartScreen().setVisible(true);  
-   
+       new StartScreen().setVisible(true);
+      
     }
     public static List<Club> clubsDataBase() {
         return allClubs;
@@ -33,7 +35,7 @@ public class ClassePrincipal{
             throws ObjectNotFoundException, InvalidValueException {
         
         if (freePlayer == null) {
-            String message = "Não foi possível encontrar o objeto "+freePlayer;
+            String message = "Variavel 'freePlayer' == null "+freePlayer;
             throw new ObjectNotFoundException(message);
         } else{
             switch(action) {
@@ -53,8 +55,8 @@ public class ClassePrincipal{
     public static void updateDataBase(Club club) {
         int index = 0;
         for (int i = 0; i < clubsDataBase().size(); i++) {
-            
-            if (club.getName().equals(clubsDataBase().get(i).getName())) {                
+            String clubName = clubsDataBase().get(i).getName();
+            if (club.getName().equals(clubName)) {                
                 index = i;
             }
         }
@@ -111,9 +113,9 @@ public class ClassePrincipal{
         
     private static Club barcelona() {
         Player[] castBarca = new Player[20];
-        //new Player("Neymar Jr", "Atacante", (ataque)89,(meio) 85,(defesa) 34,(goleiro) 8,(idade) 28); 
-        castBarca[0] = new Player("Ter Stegen",Position.GOALKEEPER, new Ability(5, 8, 40, 86), 28, "FC Barcelona");
-        castBarca[1] = new Player("Neto", Position.GOALKEEPER, new Ability(14, 16, 50, 83), 31, "FC Barcelona"); 
+        //new Player("Neymar Jr", "Atacante", (ataque)89,(meio) 85,(defesa) 34,(goleiro) 8,(idade) 28);       
+        castBarca[0] = new Player("Ter Stegen", Position.GOALKEEPER, new Ability(5, 8, 40, 86), 28, "FC Barcelona");
+        castBarca[1] = new Player("Neto", Position.GOALKEEPER, new Ability(14, 16, 50, 83), 31, "FC Barcelona");  
         castBarca[2] = new Player("Piqué", Position.DEFENDER, new Ability(58, 62, 84, 40), 33, "FC Barcelona");        
         castBarca[3] = new Player("Lenglet", Position.DEFENDER, new Ability(54, 62, 80, 10), 25, "FC Barcelona");
         castBarca[4] = new Player("Jordi Alba", Position.DEFENDER, new Ability(76, 71, 81, 5), 31, "FC Barcelona");
@@ -132,6 +134,7 @@ public class ClassePrincipal{
         castBarca[17] = new Player("A. Fati", Position.FORWARD, new Ability(79, 72, 40, 5), 18, "FC Barcelona");
         castBarca[18] = new Player("Dembélé", Position.FORWARD, new Ability(81, 76, 40, 5), 23, "FC Barcelona");
         castBarca[19] = new Player("Trincão", Position.FORWARD, new Ability(74, 76, 40, 5), 21, "FC Barcelona");
+        
         List<Player> cast = new ArrayList();
         for (Player player : castBarca) {
             cast.add(player);

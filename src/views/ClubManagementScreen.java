@@ -5,14 +5,12 @@ import static classes.ClassePrincipal.getPlayer;
 import static classes.ClassePrincipal.playersDataBase;
 import classes.club.BaseClub;
 import classes.club.Club;
-import classes.club.Club.NegotiationResponse;
 import classes.club.FreePlayer;
 import classes.club.Manager;
 import classes.club.Player;
 import classes.competicoes.Leaderboard;
 import classes.competicoes.Schedule;
 import classes.competicoes.SuperChampions;
-import exceptions.InvalidValueException;
 import exceptions.ObjectNotFoundException;
 import java.awt.Color;
 import java.awt.MouseInfo;
@@ -22,13 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.table.DefaultTableModel;
 
-public class ClubManagement extends javax.swing.JFrame { 
+public class ClubManagementScreen extends javax.swing.JFrame { 
     private final Manager 
         manager;    
     private final JPopupMenu 
@@ -46,7 +43,7 @@ public class ClubManagement extends javax.swing.JFrame {
     private SuperChampions superChampions = new SuperChampions(clubsDataBase());
     private Club homeTeam, awayTeam;
     
-    public ClubManagement(Manager manager) {
+    public ClubManagementScreen(Manager manager) {
         initComponents();        
         this.manager = manager;
         this.frameLeaderboard.setVisible(false);
@@ -57,7 +54,7 @@ public class ClubManagement extends javax.swing.JFrame {
         //loadRodada();
         this.tableCast.setAutoCreateRowSorter(true);
         this.tableSearch.setAutoCreateRowSorter(true);
-        initPopupMenuElenco(this);        
+        initPopupMenuElenco();        
         initMoney();
         JOptionPane.showMessageDialog(this, "Seja bem vindo ao "+ this.manager.getClub().getName()+ ","
                 + " " +this.manager.getName()+
@@ -525,9 +522,8 @@ public class ClubManagement extends javax.swing.JFrame {
         this.lblMoney.setText(""+(int)this.manager.getClub().getMoney());
     }
     
-    private void initPopupMenuElenco(JFrame jframe) {  
-        
-        //Rescindir contrato com jogador//
+    private void letFreePlayer() {
+         //Rescindir contrato com jogador//
         //<editor-fold desc="Method">
         this.menuItem = new JMenuItem ("Rescindir contrato");        
         this.menuItem.getAccessibleContext().setAccessibleDescription("rescindir contrato");
@@ -535,16 +531,14 @@ public class ClubManagement extends javax.swing.JFrame {
 
             int index = this.tableCast.getSelectedRow();
             String playerName = (String)this.tableCast.getValueAt(index, 1);
-            int resp = JOptionPane.showConfirmDialog(jframe, "Rescindir contrato com " + playerName+"?", "Selecione", 2);
+            String message = "Rescindir contrato com " + playerName+"?";
+            int resp = JOptionPane.showConfirmDialog(this, message, "Selecione", 2);
             
             if (resp == 0) {      
                 try {
                     this.manager.LetFreePlayer(getPlayer(playerName));
                 } catch (ObjectNotFoundException ex) {
-                    Logger.getLogger(ClubManagement.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (InvalidValueException ex) {
-                    Logger.getLogger(ClubManagement.class.getName()).log(Level.SEVERE, null, ex);
-                    JOptionPane.showMessageDialog(jframe, "Digite um valor válido!", "Atenção!", 2);
+                    ex.printStackTrace();
                 }
                 initTable();  
                 initMoney();
@@ -552,6 +546,9 @@ public class ClubManagement extends javax.swing.JFrame {
         });
         this.menuPopupCast.add(menuItem);
         //</editor-fold>
+    }
+    
+    private void sellPlayer() {
         //Vender jogador//
         //<editor-fold desc="Method">
         this.menuItem = new JMenuItem ("Vender Jogador");
@@ -560,7 +557,7 @@ public class ClubManagement extends javax.swing.JFrame {
             
             int index = this.tableCast.getSelectedRow();
             String playerName = (String) this.tableCast.getValueAt(index, 1);
-            int resp = JOptionPane.showConfirmDialog(jframe, 
+            int resp = JOptionPane.showConfirmDialog(this, 
                     "Vender "+playerName+"?", "Selecione uma opção", 2);
             
             if (resp == 0) {
@@ -571,12 +568,12 @@ public class ClubManagement extends javax.swing.JFrame {
                     String message = player.getName()+" foi vendido para o"+club.getName()
                             +" por "+ (int)(player.getMarketValue()*1.3)+" Milhões";
                             
-                    JOptionPane.showMessageDialog(jframe, message);
+                    JOptionPane.showMessageDialog(this, message);
                     initTable();
                     initMoney();
                 } catch (ObjectNotFoundException ex) {
-                    Logger.getLogger(ClubManagement.class.getName()).log(Level.SEVERE, null, ex);
-                    JOptionPane.showConfirmDialog(jframe, "Esse jogador não está mais no seu clube!");
+                    Logger.getLogger(ClubManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showConfirmDialog(this, "Esse jogador não está mais no seu clube!");
                 }
             }
             
@@ -585,8 +582,9 @@ public class ClubManagement extends javax.swing.JFrame {
         //</editor-fold>
     }
     
-    private void initPopupMenuPesquisar(JFrame jframe, BaseClub club, String playerName) {
+    private void buyPlayer(BaseClub club, String playerName) {
         //Comprar Jogador//        
+        //<editor-fold desc="Method">
         this.menuItem = new JMenuItem("Contratar");
         this.menuItem.getAccessibleContext().setAccessibleDescription("Contratar");                   
        
@@ -600,28 +598,27 @@ public class ClubManagement extends javax.swing.JFrame {
                     try {
                         Player player = getPlayer(playerName);
                         Club.NegotiationResponse resposta = this.manager.negotiateWithFreePlayer(player);
-                        JOptionPane.showMessageDialog(jframe, resposta.getResponse());
+                        JOptionPane.showMessageDialog(this, resposta.getResponse());
                     } catch (ObjectNotFoundException ex) {
-                        Logger.getLogger(ClubManagement.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (InvalidValueException ex) {
-                        Logger.getLogger(ClubManagement.class.getName()).log(Level.SEVERE, null, ex);
-                        JOptionPane.showConfirmDialog(jframe, "Erro!");
+                        ex.printStackTrace();
                     }
                 }else {
                     try {
                         String input = JOptionPane.showInputDialog(
-                                jframe,
+                                this,
                                 "Sua proposta por "+playerName+"(em Milhões):"
-                        );
-                        double offer = 0;
-                        if (!input.isBlank() && !input.isEmpty()) {
-                            offer = Double.parseDouble(input);
-                        }
+                        );                       
+                       
+                        double offer = Double.parseDouble(input);                        
                         Player player = getPlayer(playerName);
-                        Club.NegotiationResponse response = this.manager.buyPlayer((Club)club, player, offer);
-                        JOptionPane.showMessageDialog(jframe, response.getResponse());
+                        Club.NegotiationResponse response;
+                        response = this.manager.buyPlayer((Club)club, player, offer);
+                        JOptionPane.showMessageDialog(this, response.getResponse());
                     } catch (ObjectNotFoundException ex) {
-                        Logger.getLogger(ClubManagement.class.getName()).log(Level.SEVERE, null, ex);
+                        ex.printStackTrace();
+                    } catch (NumberFormatException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(this, "Digite um valor válido!", "!!!", 2);
                     }
                 }
                 initMoney();
@@ -632,6 +629,17 @@ public class ClubManagement extends javax.swing.JFrame {
         
         this.menuPopupSearch.removeAll();
         this.menuPopupSearch.add(menuItem);
+        
+        //</editor-fold>
+    }
+    
+    private void initPopupMenuElenco(){  
+        letFreePlayer();
+        sellPlayer();        
+    }
+    
+    private void initPopupMenuPesquisar(BaseClub club, String playerName) {
+        buyPlayer(club, playerName);
     }        
         
     private void loadRodada() {
@@ -670,11 +678,12 @@ public class ClubManagement extends javax.swing.JFrame {
     private void btnSearchForActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchForActionPerformed
         DefaultTableModel table = (DefaultTableModel) this.tableSearch.getModel();       
         table.setRowCount(0);
-        String nome = this.namePlayerInput.getText().trim();
+        String nameSearched = this.namePlayerInput.getText().trim().toLowerCase();
         List<Player> all = playersDataBase();
+        
         for (int i = 0; i < all.size(); i++) {
-            if (all.get(i).getName().indexOf(nome) != -1) {
-                
+            String nameFound = all.get(i).getName().toLowerCase();
+            if (nameFound.contains(nameSearched)) {                
                 Object[] players = {
                     all.get(i).getName(), 
                     all.get(i).getStatus(), 
@@ -704,8 +713,9 @@ public class ClubManagement extends javax.swing.JFrame {
             }
             if (club == null) {
                 club = new FreePlayer();
-            }
-            initPopupMenuPesquisar(this, club, playerName);
+            }        
+            
+            initPopupMenuPesquisar(club, playerName);
             this.menuPopupSearch.show(this, posicX-85, posicY-60);
         }
     }//GEN-LAST:event_tableSearchMouseClicked
@@ -725,7 +735,7 @@ public class ClubManagement extends javax.swing.JFrame {
             try {
                 player = getPlayer(playerName);
             } catch (ObjectNotFoundException ex) {
-                Logger.getLogger(ClubManagement.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ClubManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (state.equals("---")) {
                 if (this.startTeam.size() < 11) {

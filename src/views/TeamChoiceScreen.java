@@ -9,10 +9,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
-public class TeamChoice extends javax.swing.JFrame {
+public class TeamChoiceScreen extends javax.swing.JFrame {
     private final String managerName;
     private Club club;
-    public TeamChoice(String managerName) {
+    public TeamChoiceScreen(String managerName) {
         initComponents();  
         initTeamsList();
         initBackground();
@@ -103,7 +103,7 @@ public class TeamChoice extends javax.swing.JFrame {
     private void btnStartGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartGameActionPerformed
         Manager manager = new Manager(this.managerName, this.club);
         this.dispose();
-        new ClubManagement(manager).setVisible(true);
+        new ClubManagementScreen(manager).setVisible(true);
     }//GEN-LAST:event_btnStartGameActionPerformed
 
     private void boxSelectionClubActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boxSelectionClubActionPerformed
@@ -116,7 +116,7 @@ public class TeamChoice extends javax.swing.JFrame {
             this.lblEmblem.setIcon(club.getEmblemBig());
             this.club = club;
         } catch (ObjectNotFoundException | NullPointerException ex) {
-            Logger.getLogger(TeamChoice.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TeamChoiceScreen.class.getName()).log(Level.SEVERE, null, ex);
             this.lblEmblem.setText("Arquivo não encontrado");
         }       
     }//GEN-LAST:event_boxSelectionClubActionPerformed
