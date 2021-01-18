@@ -9,6 +9,7 @@ import classes.club.FreePlayer;
 import classes.club.Manager;
 import classes.club.Player;
 import classes.competicoes.Leaderboard;
+import classes.competicoes.Match;
 import classes.competicoes.Schedule;
 import classes.competicoes.SuperChampions;
 import exceptions.ObjectNotFoundException;
@@ -26,56 +27,42 @@ import javax.swing.JPopupMenu;
 import javax.swing.table.DefaultTableModel;
 
 public class ClubManagementScreen extends javax.swing.JFrame { 
-    private final Manager 
-        manager;    
-    private final JPopupMenu 
-        menuPopupCast = new JPopupMenu(), 
-        menuPopupSearch = new JPopupMenu();    
-    private JMenuItem 
-        menuItem = null;
-    private String 
-        data;
-    private ArrayList<Player> 
-            startTeam = new ArrayList(),
-            substitutes = new ArrayList();
-    private Leaderboard 
-            leaderboard = new Leaderboard(clubsDataBase()) ;
-    private SuperChampions superChampions = new SuperChampions(clubsDataBase());
+    private final Manager manager;     
+    private final JPopupMenu menuPopupCast, menuPopupSearch;     
+    private JMenuItem menuItem;    
+    private String data;    
+    private ArrayList<Player> startTeam, substitutes;    
+    private Leaderboard leaderboard;    
+    private SuperChampions superChampions;    
     private Club homeTeam, awayTeam;
     
     public ClubManagementScreen(Manager manager) {
         initComponents();      
+        this.manager = manager;     
+        this.menuPopupSearch = new JPopupMenu();
+        this.menuPopupCast = new JPopupMenu();
+        this.superChampions = new SuperChampions(clubsDataBase());
+        this.leaderboard = new Leaderboard(clubsDataBase());
+        this.substitutes = new ArrayList();
+        this.startTeam = new ArrayList();
         this.superChampions.loadAllRounds();
-        this.manager = manager;
-        this.frameLeaderboard.setVisible(false);
         this.frameSearch.setVisible(false);         
         this.setLocationRelativeTo(null);       
-        initAssets();
-        initTable();
-        //loadRodada();
         this.tableCast.setAutoCreateRowSorter(true);
         this.tableSearch.setAutoCreateRowSorter(true);
         initPopupMenuElenco();        
+        initAssets();
+        initTable();
         initMoney();
-        JOptionPane.showMessageDialog(this, "Seja bem vindo ao "+ this.manager.getClub().getName()+ ","
-                + " " +this.manager.getName()+
-               ".\nAcreditamos que você possa levar esse grande clube"
-                       + "\nao titulo dessa temporada. Boa sorte!"
-                       + "\n\n              Atenciosamente, a diretoria.", "Boas Vindas!", 1
-        
-        
-        );
+        startMessage();
+        loadRivals();
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        home = new javax.swing.JPanel();
-        frameLeaderboard = new javax.swing.JInternalFrame();
-        btnQuitLeaderboard = new javax.swing.JLabel();
-        scrollTableLeaderboard = new javax.swing.JScrollPane();
-        tableLeaderboard = new javax.swing.JTable();
+        homePanel = new javax.swing.JPanel();
         frameSearch = new javax.swing.JInternalFrame();
         panelSearch = new javax.swing.JPanel();
         namePlayerInput = new javax.swing.JTextField();
@@ -105,6 +92,7 @@ public class ClubManagementScreen extends javax.swing.JFrame {
         lblStaticMaxReservas = new javax.swing.JLabel();
         lblManager = new javax.swing.JLabel();
         background = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
@@ -113,66 +101,7 @@ public class ClubManagementScreen extends javax.swing.JFrame {
         setUndecorated(true);
         setResizable(false);
 
-        home.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        frameLeaderboard.setTitle("Classificação");
-        frameLeaderboard.setVisible(true);
-
-        btnQuitLeaderboard.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        btnQuitLeaderboard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/emblems/btnSair.png"))); // NOI18N
-        btnQuitLeaderboard.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnQuitLeaderboardMouseClicked(evt);
-            }
-        });
-
-        tableLeaderboard.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null}
-            },
-            new String [] {
-                "P", "Clube", "Pts", "J", "V", "E", "D", "GF", "GS", "SG"
-            }
-        ));
-        scrollTableLeaderboard.setViewportView(tableLeaderboard);
-        if (tableLeaderboard.getColumnModel().getColumnCount() > 0) {
-            tableLeaderboard.getColumnModel().getColumn(0).setPreferredWidth(1);
-            tableLeaderboard.getColumnModel().getColumn(1).setResizable(false);
-            tableLeaderboard.getColumnModel().getColumn(1).setPreferredWidth(500);
-        }
-
-        javax.swing.GroupLayout frameLeaderboardLayout = new javax.swing.GroupLayout(frameLeaderboard.getContentPane());
-        frameLeaderboard.getContentPane().setLayout(frameLeaderboardLayout);
-        frameLeaderboardLayout.setHorizontalGroup(
-            frameLeaderboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(frameLeaderboardLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(frameLeaderboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollTableLeaderboard, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, frameLeaderboardLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnQuitLeaderboard)))
-                .addContainerGap())
-        );
-        frameLeaderboardLayout.setVerticalGroup(
-            frameLeaderboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(frameLeaderboardLayout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(btnQuitLeaderboard, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(scrollTableLeaderboard, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        home.add(frameLeaderboard, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 80, 440, 250));
+        homePanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         frameSearch.setTitle("Procurar Jogador");
         frameSearch.setVisible(true);
@@ -272,7 +201,7 @@ public class ClubManagementScreen extends javax.swing.JFrame {
                     .addGap(0, 0, Short.MAX_VALUE)))
         );
 
-        home.add(frameSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 50, 910, -1));
+        homePanel.add(frameSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 50, 910, -1));
 
         btnExit.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         btnExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/emblems/btnSair.png"))); // NOI18N
@@ -281,7 +210,7 @@ public class ClubManagementScreen extends javax.swing.JFrame {
                 btnExitMouseClicked(evt);
             }
         });
-        home.add(btnExit, new org.netbeans.lib.awtextra.AbsoluteConstraints(1160, 20, -1, -1));
+        homePanel.add(btnExit, new org.netbeans.lib.awtextra.AbsoluteConstraints(1160, 20, -1, -1));
 
         lblPlayGame.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         lblPlayGame.setForeground(new java.awt.Color(255, 255, 255));
@@ -291,16 +220,16 @@ public class ClubManagementScreen extends javax.swing.JFrame {
                 lblPlayGameMouseClicked(evt);
             }
         });
-        home.add(lblPlayGame, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 320, 120, 50));
+        homePanel.add(lblPlayGame, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 320, 120, 50));
 
         lblTitle.setBackground(new java.awt.Color(0, 0, 0));
         lblTitle.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
         lblTitle.setForeground(new java.awt.Color(255, 255, 255));
         lblTitle.setText("Real Madrid");
-        home.add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 40, 239, 40));
+        homePanel.add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 40, 239, 40));
 
         lblEmblem.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        home.add(lblEmblem, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 127, 110));
+        homePanel.add(lblEmblem, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 127, 110));
 
         lblSearchPlayer.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         lblSearchPlayer.setForeground(new java.awt.Color(255, 255, 255));
@@ -310,34 +239,34 @@ public class ClubManagementScreen extends javax.swing.JFrame {
                 lblSearchPlayerMouseClicked(evt);
             }
         });
-        home.add(lblSearchPlayer, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 370, 190, 50));
+        homePanel.add(lblSearchPlayer, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 370, 190, 50));
 
         lblStaticMoney.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         lblStaticMoney.setForeground(new java.awt.Color(0, 0, 0));
         lblStaticMoney.setText("em caixa");
-        home.add(lblStaticMoney, new org.netbeans.lib.awtextra.AbsoluteConstraints(1020, 20, -1, 30));
+        homePanel.add(lblStaticMoney, new org.netbeans.lib.awtextra.AbsoluteConstraints(1020, 20, -1, 30));
 
         lblMoney.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         lblMoney.setForeground(new java.awt.Color(0, 0, 0));
         lblMoney.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblMoney.setText("555");
-        home.add(lblMoney, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 20, 60, 30));
+        homePanel.add(lblMoney, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 20, 60, 30));
 
         lblStaticMilion.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         lblStaticMilion.setForeground(new java.awt.Color(0, 0, 0));
         lblStaticMilion.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblStaticMilion.setText("Milhões");
-        home.add(lblStaticMilion, new org.netbeans.lib.awtextra.AbsoluteConstraints(970, 20, 50, 30));
+        homePanel.add(lblStaticMilion, new org.netbeans.lib.awtextra.AbsoluteConstraints(970, 20, 50, 30));
 
         lblDate.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         lblDate.setForeground(new java.awt.Color(0, 0, 0));
         lblDate.setText("00/00/0000");
-        home.add(lblDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 20, -1, 30));
+        homePanel.add(lblDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 20, -1, 30));
 
         lblStaticStartTeam.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         lblStaticStartTeam.setForeground(new java.awt.Color(0, 0, 0));
         lblStaticStartTeam.setText("Titulares:");
-        home.add(lblStaticStartTeam, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 30, 60, -1));
+        homePanel.add(lblStaticStartTeam, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 30, 60, -1));
 
         tableCast.setBackground(new java.awt.Color(255, 255, 255));
         tableCast.setModel(new javax.swing.table.DefaultTableModel(
@@ -409,29 +338,29 @@ public class ClubManagementScreen extends javax.swing.JFrame {
             tableCast.getColumnModel().getColumn(6).setPreferredWidth(10);
         }
 
-        home.add(scrollCast, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 120, 550, 380));
+        homePanel.add(scrollCast, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 120, 550, 380));
 
         lblStartTeam.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         lblStartTeam.setForeground(new java.awt.Color(0, 0, 0));
         lblStartTeam.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblStartTeam.setText("0");
-        home.add(lblStartTeam, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 30, -1, -1));
+        homePanel.add(lblStartTeam, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 30, -1, -1));
 
         lblStaticMaxStartTeam.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         lblStaticMaxStartTeam.setForeground(new java.awt.Color(0, 0, 0));
         lblStaticMaxStartTeam.setText("/ 11");
-        home.add(lblStaticMaxStartTeam, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 30, -1, -1));
+        homePanel.add(lblStaticMaxStartTeam, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 30, -1, -1));
 
         lblStaticSubstitutes.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         lblStaticSubstitutes.setForeground(new java.awt.Color(0, 0, 0));
         lblStaticSubstitutes.setText("Reservas:");
-        home.add(lblStaticSubstitutes, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 50, 60, -1));
+        homePanel.add(lblStaticSubstitutes, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 50, 60, -1));
 
         lblSubstitutes.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         lblSubstitutes.setForeground(new java.awt.Color(0, 0, 0));
         lblSubstitutes.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblSubstitutes.setText("0");
-        home.add(lblSubstitutes, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 50, 10, -1));
+        homePanel.add(lblSubstitutes, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 50, 10, -1));
 
         lblLeaderbord.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         lblLeaderbord.setForeground(new java.awt.Color(0, 0, 0));
@@ -441,32 +370,47 @@ public class ClubManagementScreen extends javax.swing.JFrame {
                 lblLeaderbordMouseClicked(evt);
             }
         });
-        home.add(lblLeaderbord, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 420, -1, 50));
+        homePanel.add(lblLeaderbord, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 420, -1, 50));
 
         lblStaticMaxReservas.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         lblStaticMaxReservas.setForeground(new java.awt.Color(0, 0, 0));
         lblStaticMaxReservas.setText("/ 7");
-        home.add(lblStaticMaxReservas, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 50, -1, -1));
+        homePanel.add(lblStaticMaxReservas, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 50, -1, -1));
 
         lblManager.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         lblManager.setForeground(new java.awt.Color(0, 0, 0));
         lblManager.setText("Manager");
-        home.add(lblManager, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 80, 130, 20));
-        home.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1200, 610));
+        homePanel.add(lblManager, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 80, 130, 20));
+        homePanel.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1200, 610));
+
+        jLabel1.setText("jLabel1");
+        homePanel.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 230, 100, 50));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(home, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(homePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(home, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(homePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    private void startMessage() {
+        String club = this.manager.getClub().getName();
+        
+        String manager = this.manager.getName();
+        
+        String message = "   Seja bem vindo ao "+ club + ", " + manager +".  \n"
+                       + " Acreditamos que você possa levar esse grande clube\n"
+                       + "      ao titulo dessa temporada. Boa sorte!        \n"
+                       + "\n         Atenciosamente, a diretoria.             ";
+        
+        JOptionPane.showMessageDialog(this, message , "Boas vindas!", 1);        
+    }
     
     private void initAssets(){    
         Color foreground = manager.getClub().getForeground();
@@ -643,25 +587,27 @@ public class ClubManagementScreen extends javax.swing.JFrame {
         buyPlayer(club, playerName);
     }        
         
-    private void loadRodada() {
-     /*
-        this.supeLiga.sortearRodada();
-        for (int i = 0; i < 3; i++) {
-          
-            Clube mandante = this.supeLiga.getRodada()[i].getMandante();
-            Clube awayTeam = this.supeLiga.getRodada()[i].getawayTeam();
-            if (this.manager.getClub().equals(mandante)) {               
-                this.homeTeam = this.manager.getClub();
-                this.awayTeam = awayTeam;             
-            } else if (this.manager.getClub().equals(awayTeam)) {
-                this.homeTeam = mandante;
-                this.awayTeam = this.manager.getClub();
-              
+    private void loadRivals() {
+        this.superChampions.loadAllRounds();
+        List<Match> allMatchs = this.superChampions.getRound();
+        String thisClub = this.manager.getClub().getName();
+        
+        for (int i = 0; i < allMatchs.size(); i++) {
+            Club home = allMatchs.get(i).getHomeTeam();
+            Club away = allMatchs.get(i).getAwayTeam();
+            if (home.notPlayed(away)) {                
+                if (home.getName().equals(thisClub)) {
+                    this.homeTeam = this.manager.getClub();
+                    this.awayTeam = away;                
+                } else if (away.getName().equals(thisClub)) {
+                    this.awayTeam = this.manager.getClub();
+                    this.homeTeam = home;
+                }
             }
         }
       
-       */
     }
+    
             
     private void btnQuitSearchWindowMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnQuitSearchWindowMouseClicked
         this.frameSearch.setVisible(false);
@@ -774,35 +720,12 @@ public class ClubManagementScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_lblSearchPlayerMouseClicked
 
     private void lblLeaderbordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblLeaderbordMouseClicked
-        DefaultTableModel table = (DefaultTableModel) this.tableLeaderboard.getModel();
-        table.setRowCount(0);
-        this.frameLeaderboard.setVisible(true);
-        List<Club> clubesStats = this.leaderboard.getParticipants();
-        for (int i = 0; i < clubsDataBase().size(); i++) {
-            Object[] tabela = {
-                i+1,
-                clubesStats.get(i).getName(),
-                clubesStats.get(i).getStats().getPoints(),
-                clubesStats.get(i).getStats().getPlayed(),
-                clubesStats.get(i).getStats().getWins(),
-                clubesStats.get(i).getStats().getDraws(),
-                clubesStats.get(i).getStats().getLosses(),
-                clubesStats.get(i).getStats().getGolsFor(),
-                clubesStats.get(i).getStats().getGoalsConceded(),
-                clubesStats.get(i).getStats().getGoalDifference()
-            }; 
-            table.addRow(tabela);
-        }
+       new LeaderboardWindow().setVisible(true);
     }//GEN-LAST:event_lblLeaderbordMouseClicked
-
-    private void btnQuitLeaderboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnQuitLeaderboardMouseClicked
-        this.frameLeaderboard.setVisible(false);
-    }//GEN-LAST:event_btnQuitLeaderboardMouseClicked
 
     private void lblPlayGameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPlayGameMouseClicked
         
-        if (this.startTeam.size() == 11) {
-            this.loadRodada();
+        if (this.startTeam.size() == 11) {            
             if (this.homeTeam == null || this.awayTeam == null) {
                 this.setVisible(false);
                 System.out.println("deu merda aqui krl");
@@ -821,12 +744,11 @@ public class ClubManagementScreen extends javax.swing.JFrame {
     private javax.swing.JLabel background;
     private javax.swing.JLabel backgroundSearchWindow;
     private javax.swing.JLabel btnExit;
-    private javax.swing.JLabel btnQuitLeaderboard;
     private javax.swing.JLabel btnQuitSearchWindow;
     private javax.swing.JButton btnSearchFor;
-    private javax.swing.JInternalFrame frameLeaderboard;
     private javax.swing.JInternalFrame frameSearch;
-    private javax.swing.JPanel home;
+    private javax.swing.JPanel homePanel;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lblDate;
     private javax.swing.JLabel lblEmblem;
     private javax.swing.JLabel lblLeaderbord;
@@ -848,9 +770,7 @@ public class ClubManagementScreen extends javax.swing.JFrame {
     private javax.swing.JPanel panelSearch;
     private javax.swing.JScrollPane scrollCast;
     private javax.swing.JScrollPane scrollPaneSearchTable;
-    private javax.swing.JScrollPane scrollTableLeaderboard;
     private javax.swing.JTable tableCast;
-    private javax.swing.JTable tableLeaderboard;
     private javax.swing.JTable tableSearch;
     // End of variables declaration//GEN-END:variables
     //</editor-fold>

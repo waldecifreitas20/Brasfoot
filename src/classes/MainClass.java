@@ -9,14 +9,10 @@ import classes.club.FreePlayer;
 import classes.club.Player;
 import classes.club.Player.Ability;
 import classes.club.Player.Position;
-import classes.competicoes.SuperChampions;
 import exceptions.InvalidValueException;
 import exceptions.ObjectNotFoundException;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import views.StartScreen;
 
 public class MainClass{   
     
@@ -27,8 +23,8 @@ public class MainClass{
     public static int REMOVE = 0;
     
     public static void main(String[] args) throws IOException {  
-        SuperChampions sc = new SuperChampions(allClubs);
-        sc.list();
+        //new StartScreen().setVisible(true);
+        System.out.println(allPlayers.size());
       /*  List<String> matchs = new ArrayList<>();
         do {
             String game = sc.drawRound();
@@ -135,13 +131,13 @@ public class MainClass{
     }
     
     private static List<Player> initPlayers() {
-        List<Player> todosplayeres = new ArrayList();
+        List<Player> todosplayers = new ArrayList();
         for (int i = 0; i < allClubs.size(); i++) {            
             for (int j = 0; j < allClubs.get(i).getPlayers().size(); j++) {
-              todosplayeres.add(allClubs.get(i).getPlayers().get(j)); 
+              todosplayers.add(allClubs.get(i).getPlayers().get(j)); 
             }            
         } 
-        return todosplayeres;
+        return todosplayers;
     }
         
     private static Club barcelona() {
@@ -313,7 +309,7 @@ public class MainClass{
     private static Club juve() {
         Player[] castJuve = new Player[1];
         //new Player("Neymar Jr", "Atacante", (ataque)89,(meio) 85,(defesa) 34,(goleiro) 8,(idade) 28);
-        castJuve[0] = new Player("Szczesny","Goleiro", new Ability(5, 8, 40, 85), 30, "FC Barcelona");
+        castJuve[0] = new Player("Szczesny","Goleiro", new Ability(5, 8, 40, 85), 30, "Juventus FC");
        
         List<Player> cast = new ArrayList();
         for (Player player : castJuve) {
