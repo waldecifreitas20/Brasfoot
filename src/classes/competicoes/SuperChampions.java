@@ -6,7 +6,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
@@ -14,15 +13,16 @@ import java.util.Stack;
 public class SuperChampions {
     private List<Club> participants ;
     private Stack<Club> availableTeam;
-    private List<Match> round, matchRecord;
-    public int games = 0;
+    private Match[][] matchs;
+    private int games;
+
     public SuperChampions(List<Club> teams) {
         this.participants = teams;
         this.availableTeam = new Stack<>();
-        this.round = new ArrayList<>();
-        this.matchRecord = new ArrayList<>();
+        this.matchs = new Match[3][10];
     }   
-
+    //<editor-fold>
+    /*
     public String drawRound() {
         availableTeam.removeAllElements();
         availableTeam.addAll(participants);            
@@ -31,7 +31,6 @@ public class SuperChampions {
         Club homeTeam = availableTeam.pop();
         Collections.shuffle(availableTeam);            
         Club awayTeam = availableTeam.pop();
-       // System.out.println(availableTeam.size());
         String game = "";
         if (homeTeam.notPlayed(awayTeam)) {
             homeTeam.getStats().addClubsPlayed(awayTeam);               
@@ -45,29 +44,34 @@ public class SuperChampions {
         }
         return game;      
     }
+    */
+    //</editor-fold>
     
-    public void list() {
-        loadAllRounds();
-        for (int i = 0; i < this.round.size(); i++) {
-            System.out.println(this.round.get(i).getHomeTeam().getName()+
-                    " x " + this.round.get(i).getAwayTeam().getName());
-        }
-    }
     public void loadAllRounds() {
         File root = new File("");
         String relativePath = "/src/classes/rounds.txt";
         Path directory = Paths.get(root.getAbsolutePath()+relativePath);
+    
         try {
-            List<String> games = Files.readAllLines(directory);
-            String clubs[] = new String[2];
-            for (int i = 0; i < games.size(); i++) {
-                clubs = games.get(i).split("&");
-                Club home = getClub(clubs[0].trim());
-                Club away = getClub(clubs[1].trim());
-                this.round.add(new Match(home, away));                
-            }
+            List<String> allMatchs = Files.readAllLines(directory);
+            String match[] = new String[2];
+            int round = 0;
+            int game = 0;
+            Match[][] games = new Match[3][10];
+            for (String line : allMatchs) {  
+                if (line.equals("---")) {
+                    round++;
+                    game = 0;                 
+                } else {
+                    match = line.split("&");
+                    Club home = getClub(match[0].trim());
+                    Club away = getClub(match[1].trim());
+                    this.matchs[game][round] = new Match(home, away);
+                    game++;                    
+                }                
+            }            
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace();          
         }
     }
     
@@ -79,11 +83,13 @@ public class SuperChampions {
         return availableTeam;
     }
 
-    public List<Match> getRound() {
-        return round;
-    }
+    public Match[] getMatchs(int round) {
+        Match[] games = new Match[3];       
+        for (int g = 0; g < 3; g++) {
+            games[g] = matchs[g][round];
+        }
+        
+        return games;
+    }    
 
-    public List<Match> getMatchRecord() {
-        return matchRecord;
-    }
 }

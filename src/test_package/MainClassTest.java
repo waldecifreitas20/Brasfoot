@@ -59,10 +59,5 @@ class MainClassTest {
 		}
 		Assertions.assertNull(anyClub);
 	}
-	
-	@Test
-	void updateFreePlayerTest() {
-		String[] args = {"a", "b", "C"};
-		MainClass.main(args);
-	}
+		
 }

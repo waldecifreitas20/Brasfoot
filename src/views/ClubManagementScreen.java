@@ -2,13 +2,9 @@ package views;
 
 import static classes.MainClass.clubsDataBase;
 import static classes.MainClass.getPlayer;
-import static classes.MainClass.playersDataBase;
-import classes.club.BaseClub;
 import classes.club.Club;
-import classes.club.FreePlayer;
 import classes.club.Manager;
 import classes.club.Player;
-import classes.competicoes.Leaderboard;
 import classes.competicoes.Match;
 import classes.competicoes.Schedule;
 import classes.competicoes.SuperChampions;
@@ -28,34 +24,32 @@ import javax.swing.table.DefaultTableModel;
 
 public class ClubManagementScreen extends javax.swing.JFrame { 
     private final Manager manager;     
-    private final JPopupMenu menuPopupCast, menuPopupSearch;     
+    private final JPopupMenu menuPopupCast;     
     private JMenuItem menuItem;    
     private String data;    
-    private ArrayList<Player> startTeam, substitutes;    
-    private Leaderboard leaderboard;    
+    private List<Match> otherMatchs;
+    private List<Player> startTeam, substitutes;  
     private SuperChampions superChampions;    
     private Club homeTeam, awayTeam;
+    private LeaderboardWindow leaderboard;
+    private int round = 0;
     
     public ClubManagementScreen(Manager manager) {
         initComponents();      
         this.manager = manager;     
-        this.menuPopupSearch = new JPopupMenu();
+        this.leaderboard = new LeaderboardWindow();
         this.menuPopupCast = new JPopupMenu();
-        this.superChampions = new SuperChampions(clubsDataBase());
-        this.leaderboard = new Leaderboard(clubsDataBase());
-        this.substitutes = new ArrayList();
-        this.startTeam = new ArrayList();
-        this.superChampions.loadAllRounds();
-        this.frameSearch.setVisible(false);         
+        this.superChampions = new SuperChampions(clubsDataBase());    
+        this.substitutes = new ArrayList<>();
+        this.startTeam = new ArrayList<>();
+        this.otherMatchs = new ArrayList<>();      
+        this.superChampions.loadAllRounds();      
         this.setLocationRelativeTo(null);       
-        this.tableCast.setAutoCreateRowSorter(true);
-        this.tableSearch.setAutoCreateRowSorter(true);
+        this.tableCast.setAutoCreateRowSorter(true);  
         initPopupMenuElenco();        
         initAssets();
         initTable();
-        initMoney();
-        startMessage();
-        loadRivals();
+        initMoney();     
     }
 
     @SuppressWarnings("unchecked")
@@ -63,15 +57,6 @@ public class ClubManagementScreen extends javax.swing.JFrame {
     private void initComponents() {
 
         homePanel = new javax.swing.JPanel();
-        frameSearch = new javax.swing.JInternalFrame();
-        panelSearch = new javax.swing.JPanel();
-        namePlayerInput = new javax.swing.JTextField();
-        lblStaticName = new javax.swing.JLabel();
-        btnSearchFor = new javax.swing.JButton();
-        scrollPaneSearchTable = new javax.swing.JScrollPane();
-        tableSearch = new javax.swing.JTable();
-        btnQuitSearchWindow = new javax.swing.JLabel();
-        backgroundSearchWindow = new javax.swing.JLabel();
         btnExit = new javax.swing.JLabel();
         lblPlayGame = new javax.swing.JLabel();
         lblTitle = new javax.swing.JLabel();
@@ -100,108 +85,13 @@ public class ClubManagementScreen extends javax.swing.JFrame {
         setBounds(new java.awt.Rectangle(320, 150, 0, 0));
         setUndecorated(true);
         setResizable(false);
+        addWindowStateListener(new java.awt.event.WindowStateListener() {
+            public void windowStateChanged(java.awt.event.WindowEvent evt) {
+                formWindowStateChanged(evt);
+            }
+        });
 
         homePanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        frameSearch.setTitle("Procurar Jogador");
-        frameSearch.setVisible(true);
-
-        panelSearch.setBackground(new java.awt.Color(102, 102, 102));
-        panelSearch.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        namePlayerInput.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                namePlayerInputActionPerformed(evt);
-            }
-        });
-        panelSearch.add(namePlayerInput, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 60, 177, -1));
-
-        lblStaticName.setBackground(new java.awt.Color(0, 0, 0));
-        lblStaticName.setForeground(new java.awt.Color(255, 255, 255));
-        lblStaticName.setText("Nome:");
-        panelSearch.add(lblStaticName, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 38, -1, -1));
-
-        btnSearchFor.setText("Pesquisar");
-        btnSearchFor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSearchForActionPerformed(evt);
-            }
-        });
-        panelSearch.add(btnSearchFor, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 102, 177, -1));
-
-        tableSearch.setForeground(new java.awt.Color(0, 0, 0));
-        tableSearch.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Nome", "Status", "Posição", "Overall", "Valor", "Idade", "Salario"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, true, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        tableSearch.setShowHorizontalLines(false);
-        tableSearch.setShowVerticalLines(false);
-        tableSearch.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tableSearchMouseClicked(evt);
-            }
-        });
-        scrollPaneSearchTable.setViewportView(tableSearch);
-        if (tableSearch.getColumnModel().getColumnCount() > 0) {
-            tableSearch.getColumnModel().getColumn(0).setResizable(false);
-            tableSearch.getColumnModel().getColumn(1).setResizable(false);
-            tableSearch.getColumnModel().getColumn(2).setPreferredWidth(10);
-            tableSearch.getColumnModel().getColumn(3).setResizable(false);
-            tableSearch.getColumnModel().getColumn(3).setPreferredWidth(5);
-            tableSearch.getColumnModel().getColumn(4).setResizable(false);
-            tableSearch.getColumnModel().getColumn(4).setPreferredWidth(10);
-            tableSearch.getColumnModel().getColumn(5).setResizable(false);
-            tableSearch.getColumnModel().getColumn(5).setPreferredWidth(5);
-            tableSearch.getColumnModel().getColumn(6).setResizable(false);
-            tableSearch.getColumnModel().getColumn(6).setPreferredWidth(10);
-        }
-
-        panelSearch.add(scrollPaneSearchTable, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 166, 790, 276));
-
-        btnQuitSearchWindow.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        btnQuitSearchWindow.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/emblems/btnSair.png"))); // NOI18N
-        btnQuitSearchWindow.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnQuitSearchWindowMouseClicked(evt);
-            }
-        });
-        panelSearch.add(btnQuitSearchWindow, new org.netbeans.lib.awtextra.AbsoluteConstraints(860, 20, -1, -1));
-        panelSearch.add(backgroundSearchWindow, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 910, 480));
-
-        javax.swing.GroupLayout frameSearchLayout = new javax.swing.GroupLayout(frameSearch.getContentPane());
-        frameSearch.getContentPane().setLayout(frameSearchLayout);
-        frameSearchLayout.setHorizontalGroup(
-            frameSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-            .addGroup(frameSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(frameSearchLayout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(panelSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
-        );
-        frameSearchLayout.setVerticalGroup(
-            frameSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-            .addGroup(frameSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(frameSearchLayout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(panelSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
-        );
-
-        homePanel.add(frameSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 50, 910, -1));
 
         btnExit.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         btnExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/emblems/btnSair.png"))); // NOI18N
@@ -399,18 +289,7 @@ public class ClubManagementScreen extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    private void startMessage() {
-        String club = this.manager.getClub().getName();
-        
-        String manager = this.manager.getName();
-        
-        String message = "   Seja bem vindo ao "+ club + ", " + manager +".  \n"
-                       + " Acreditamos que você possa levar esse grande clube\n"
-                       + "      ao titulo dessa temporada. Boa sorte!        \n"
-                       + "\n         Atenciosamente, a diretoria.             ";
-        
-        JOptionPane.showMessageDialog(this, message , "Boas vindas!", 1);        
-    }
+    
     
     private void initAssets(){    
         Color foreground = manager.getClub().getForeground();
@@ -525,147 +404,40 @@ public class ClubManagementScreen extends javax.swing.JFrame {
         });
         this.menuPopupCast.add(menuItem);
         //</editor-fold>
-    }
-    
-    private void buyPlayer(BaseClub club, String playerName) {
-        //Comprar Jogador//        
-        //<editor-fold desc="Method">
-        this.menuItem = new JMenuItem("Contratar");
-        this.menuItem.getAccessibleContext().setAccessibleDescription("Contratar");                   
-       
-        if(club.getName().equals(this.manager.getClub().getName())) {
-            this.menuItem.setEnabled(false);                 
-        }         
-        
-        this.menuItem.addActionListener((ActionEvent evt) -> {                
-            if (this.menuItem.isEnabled()) {
-                if (club.getName().equals("Sem Clube")) {
-                    try {
-                        Player player = getPlayer(playerName);
-                        Club.NegotiationResponse resposta = this.manager.negotiateWithFreePlayer(player);
-                        JOptionPane.showMessageDialog(this, resposta.getResponse());
-                    } catch (ObjectNotFoundException ex) {
-                        ex.printStackTrace();
-                    }
-                }else {
-                    try {
-                        String input = JOptionPane.showInputDialog(
-                                this,
-                                "Sua proposta por "+playerName+"(em Milhões):"
-                        );                       
-                       
-                        double offer = Double.parseDouble(input);                        
-                        Player player = getPlayer(playerName);
-                        Club.NegotiationResponse response;
-                        response = this.manager.buyPlayer((Club)club, player, offer);
-                        JOptionPane.showMessageDialog(this, response.getResponse());
-                    } catch (ObjectNotFoundException ex) {
-                        ex.printStackTrace();
-                    } catch (NumberFormatException ex) {
-                        ex.printStackTrace();
-                        JOptionPane.showMessageDialog(this, "Digite um valor válido!", "!!!", 2);
-                    }
-                }
-                initMoney();
-                initTable();
-                this.scrollCast.setVisible(false);                 
-            }
-        });
-        
-        this.menuPopupSearch.removeAll();
-        this.menuPopupSearch.add(menuItem);
-        
-        //</editor-fold>
-    }
-    
+    }    
+      
     private void initPopupMenuElenco(){  
         letFreePlayer();
         sellPlayer();        
     }
-    
-    private void initPopupMenuPesquisar(BaseClub club, String playerName) {
-        buyPlayer(club, playerName);
-    }        
-        
-    private void loadRivals() {
-        this.superChampions.loadAllRounds();
-        List<Match> allMatchs = this.superChampions.getRound();
-        String thisClub = this.manager.getClub().getName();
-        
-        for (int i = 0; i < allMatchs.size(); i++) {
-            Club home = allMatchs.get(i).getHomeTeam();
-            Club away = allMatchs.get(i).getAwayTeam();
-            if (home.notPlayed(away)) {                
-                if (home.getName().equals(thisClub)) {
-                    this.homeTeam = this.manager.getClub();
-                    this.awayTeam = away;                
-                } else if (away.getName().equals(thisClub)) {
-                    this.awayTeam = this.manager.getClub();
-                    this.homeTeam = home;
-                }
+          
+    private void loadRivals() {        
+        Match[] matchs = this.superChampions.getMatchs(round);
+        this.otherMatchs = new ArrayList<>();
+        String thisClub = manager.getClub().getName();        
+        for (Match match : matchs) {
+            String home = match.getHomeTeam().getName();
+            String away = match.getAwayTeam().getName();
+            if (home.equals(thisClub)){
+                this.homeTeam = match.getHomeTeam();
+                this.awayTeam = match.getAwayTeam();
+                homeTeam.setStartingPlayers(startTeam);
+                homeTeam.setSubstitutes(substitutes);
+            } else if (away.equals(thisClub)) {
+                this.homeTeam = match.getHomeTeam();
+                this.awayTeam = match.getAwayTeam();
+                awayTeam.setStartingPlayers(startTeam);
+                awayTeam.setSubstitutes(substitutes);
+            }else {
+                this.otherMatchs.add(match);
             }
         }
-      
+       
     }
-    
-            
-    private void btnQuitSearchWindowMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnQuitSearchWindowMouseClicked
-        this.frameSearch.setVisible(false);
-        this.scrollCast.setVisible(true);
-    }//GEN-LAST:event_btnQuitSearchWindowMouseClicked
-
-    private void namePlayerInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_namePlayerInputActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_namePlayerInputActionPerformed
-
+        
     private void btnExitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnExitMouseClicked
         exit(0);
     }//GEN-LAST:event_btnExitMouseClicked
-
-    private void btnSearchForActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchForActionPerformed
-        DefaultTableModel table = (DefaultTableModel) this.tableSearch.getModel();       
-        table.setRowCount(0);
-        String nameSearched = this.namePlayerInput.getText().trim().toLowerCase();
-        List<Player> all = playersDataBase();
-        
-        for (int i = 0; i < all.size(); i++) {
-            String nameFound = all.get(i).getName().toLowerCase();
-            if (nameFound.contains(nameSearched)) {                
-                Object[] players = {
-                    all.get(i).getName(), 
-                    all.get(i).getStatus(), 
-                    all.get(i).getPosition(),
-                    (int)all.get(i).getOverall(),
-                    (int)all.get(i).getMarketValue()+"Mi",
-                    all.get(i).getAge(),
-                    (int)all.get(i).getSalary()+"Mi/ano"
-                };
-                table.addRow(players);
-            }
-        }       
-    }//GEN-LAST:event_btnSearchForActionPerformed
-
-    private void tableSearchMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableSearchMouseClicked
-        int posicX = MouseInfo.getPointerInfo().getLocation().x;
-        int posicY = MouseInfo.getPointerInfo().getLocation().y;
-        if (evt.getButton() == 3) {
-            String playerName = (String) this.tableSearch.getValueAt(this.tableSearch.getSelectedRow(), 0);
-            String clubName = (String) this.tableSearch.getValueAt(this.tableSearch.getSelectedRow(), 1);
-            BaseClub club = null;
-            
-            for (int i = 0; i < clubsDataBase().size(); i++) {
-                if (clubName.equals(clubsDataBase().get(i).getName())) {
-                    club = clubsDataBase().get(i);
-                }        
-            }
-            if (club == null) {
-                club = new FreePlayer();
-            }        
-            
-            initPopupMenuPesquisar(club, playerName);
-            this.menuPopupSearch.show(this, posicX-85, posicY-60);
-        }
-    }//GEN-LAST:event_tableSearchMouseClicked
 
     private void tableCastMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableCastMouseClicked
         int x = MouseInfo.getPointerInfo().getLocation().x;
@@ -713,40 +485,37 @@ public class ClubManagementScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_tableCastMouseClicked
 
     private void lblSearchPlayerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblSearchPlayerMouseClicked
-        DefaultTableModel table = (DefaultTableModel) this.tableSearch.getModel();       
-        table.setRowCount(0);
-        this.frameSearch.setVisible(true);
-        this.scrollCast.setVisible(false);
+        new PlayerSearcherWindow(this.manager).setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_lblSearchPlayerMouseClicked
 
     private void lblLeaderbordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblLeaderbordMouseClicked
-       new LeaderboardWindow().setVisible(true);
+        this.leaderboard.init();
+        this.leaderboard.setVisible(true);     
     }//GEN-LAST:event_lblLeaderbordMouseClicked
 
     private void lblPlayGameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPlayGameMouseClicked
         
-        if (this.startTeam.size() == 11) {            
-            if (this.homeTeam == null || this.awayTeam == null) {
-                this.setVisible(false);
-                System.out.println("deu merda aqui krl");
-            } else {
-               
-              //  new MachDay(this.homeTeam, this.awayTeam, this).setVisible(true);
-                
-            }
+        if (startTeam.size() < 11) {         
+            loadRivals();      
+            round++;
+            
+            new MachDayScreen(homeTeam, awayTeam, otherMatchs, this).setVisible(true);                
+            
         } else if(this.startTeam.size() < 11){
-            JOptionPane.showMessageDialog(this, "Selecione ao menos 11 titulares!", "Alerta!", 0);
+            String message = "Selecione ao menos 11 titulares!";
+            JOptionPane.showMessageDialog(this, message, "Alerta!", 0);
         }
     }//GEN-LAST:event_lblPlayGameMouseClicked
-    
+
+    private void formWindowStateChanged(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowStateChanged
+      
+    }//GEN-LAST:event_formWindowStateChanged
+ 
     //<editor-fold desc="Variaveis imutaveis">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel background;
-    private javax.swing.JLabel backgroundSearchWindow;
     private javax.swing.JLabel btnExit;
-    private javax.swing.JLabel btnQuitSearchWindow;
-    private javax.swing.JButton btnSearchFor;
-    private javax.swing.JInternalFrame frameSearch;
     private javax.swing.JPanel homePanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lblDate;
@@ -761,17 +530,12 @@ public class ClubManagementScreen extends javax.swing.JFrame {
     private javax.swing.JLabel lblStaticMaxStartTeam;
     private javax.swing.JLabel lblStaticMilion;
     private javax.swing.JLabel lblStaticMoney;
-    private javax.swing.JLabel lblStaticName;
     private javax.swing.JLabel lblStaticStartTeam;
     private javax.swing.JLabel lblStaticSubstitutes;
     private javax.swing.JLabel lblSubstitutes;
     private javax.swing.JLabel lblTitle;
-    private javax.swing.JTextField namePlayerInput;
-    private javax.swing.JPanel panelSearch;
     private javax.swing.JScrollPane scrollCast;
-    private javax.swing.JScrollPane scrollPaneSearchTable;
     private javax.swing.JTable tableCast;
-    private javax.swing.JTable tableSearch;
     // End of variables declaration//GEN-END:variables
     //</editor-fold>
 

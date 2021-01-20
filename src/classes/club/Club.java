@@ -202,6 +202,19 @@ public class Club extends BaseClub{
     //</editor-fold>
     
     //Metodos Publicos//    
+
+    public void setSubstitutes(List<Player> substitutes) {
+        this.substitutes = substitutes;
+    }
+
+    public void setStartingPlayers(List<Player> startingPlayers) {
+        this.startingPlayers = startingPlayers;
+    }
+      
+    public void addPlayedCLub(Club club) {
+        this.stats.addClubsPlayed(club);
+    }
+    
     public boolean notPlayed(Club rival) {
         return !this.stats.getClubsPlayed().contains(rival);
     }

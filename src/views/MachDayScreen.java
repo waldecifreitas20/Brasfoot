@@ -1,27 +1,44 @@
 package views;
 
+import static classes.MainClass.updateDataBase;
 import classes.club.Club;
+import classes.club.Player;
+import classes.competicoes.Match;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.ListModel;
 
 public class MachDayScreen extends javax.swing.JFrame {
     private Club homeTeam, awayTeam;
+    private List<Match> round;
     private Timer cronometer = new Timer();
     private boolean paused = false;
     private final JFrame clubManagementScreen;
     
-    public MachDayScreen(Club homeTeam, Club awayTeam, JFrame clubManagementScreen) {
+    public MachDayScreen(Club homeTeam, Club awayTeam, List<Match> round, JFrame clubManagementScreen) {
         initComponents();
+        this.setAlwaysOnTop(true);
+        this.setLocationRelativeTo(this);
         this.clubManagementScreen = clubManagementScreen;
         this.clubManagementScreen.setVisible(false);
-        homeTeam = homeTeam;
-        awayTeam = awayTeam;
-        //this.btnPause.setVisible(false);
+        this.homeTeam = homeTeam;
+        this.awayTeam = awayTeam;
+        this.round = round;
         this.btnGoToHome.setVisible(false);
+        this.btnChangePlayer.setEnabled(false);
         initAssets();
-        iniciarPartida();        
+        System.out.println("asdsadsdas");
+        initTeamList(this.listAwayTeamPlayers, this.awayTeam);
+        initTeamList(this.listHomeTeamPlayers, this.homeTeam);
+        System.out.println("2222");
+        start();   
+        otherMatchs();
     }
     
     @SuppressWarnings("unchecked")
@@ -48,7 +65,7 @@ public class MachDayScreen extends javax.swing.JFrame {
         btnChangePlayer = new javax.swing.JButton();
         btnGoToHome = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         mainPanel.setBackground(new java.awt.Color(51, 255, 153));
 
@@ -145,6 +162,7 @@ public class MachDayScreen extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        listHomeTeamPlayers.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         scrollPaneHomeTeam.setViewportView(listHomeTeamPlayers);
 
         listAwayTeamPlayers.setModel(new javax.swing.AbstractListModel<String>() {
@@ -235,35 +253,76 @@ public class MachDayScreen extends javax.swing.JFrame {
 
     private void initAssets() {
         this.lblHomeTeamName.setText(this.homeTeam.getName());
-        this.lblHomeTeamBadge.setIcon(this.awayTeam.getEmblemSmall());
+        this.lblHomeTeamBadge.setIcon(this.homeTeam.getEmblemSmall());
         this.lblAwayTeamName.setText(this.awayTeam.getName());
         this.lblAwayTeamBadge.setIcon(this.awayTeam.getEmblemSmall());
     }
+    private String shortPosition(String position){
+        String[] positions = {"ATA", "MC", "DEF", "GOL"};
+        
+        switch (position.toLowerCase()) {
+            case "atacante" :
+                return positions[0];
+            case "meio-campo":
+                return positions[1];
+            case "defensor":
+                return positions[2];
+            case "goleiro":
+                return positions[3];           
+        }
+        return new String("---");
+    }
     
-    private void iniciarPartida() {
+    private void initSubstitutesList() {
+        DefaultListModel model = (DefaultListModel) this.listSubstitutes.getModel();
+        model.removeAllElements();       
+        
+        for (Player player: this.homeTeam.getSubstitutes() ) {
+            String position = shortPosition(player.getPosition()); 
+            
+            model.addElement(
+                    " [" + position + "] " +
+                    player.getName() + " - " + 
+                    (int) player.getOverall());
+        }        
+        
+    }
+    
+    private void initTeamList(JList jlist,Club club) {       
+        List<Player> team = club.getStartingPlayers();       
+        DefaultListModel list = new DefaultListModel();
+        for (int i = 0; i < team.size(); i++) {
+            String player = team.get(i).getName();
+            list.addElement(player);
+        }
+        jlist.setModel(list); 
+        System.out.println(list);
+    }
+    
+    private void start() {
         this.btnPause.setVisible(true);        
         this.lblGoalHomeTeam.setText("0");
         this.lblGoalAwayTeam.setText("0");
         this.cronometer.scheduleAtFixedRate(new TimerTask() {
-            private Random random = new Random();
-
-            private int
-            timer = 0,
-            homeTeamGoal = 0,
-            awayTeamGoal = 0;           
-
-            private double
-            homeTeamGoalChance,
-            awayTeamGoalChance,
-            chanceDefesahomeTeam,
-            chanceDefesaawayTeam;
+            
+            private final Random 
+                    random = new Random();
+            private int 
+                    timer = 0, 
+                    homeTeamGoal = 0, 
+                    awayTeamGoal = 0; 
+            private double 
+                    homeTeamGoalChance, 
+                    awayTeamGoalChance,
+                    chanceDefesahomeTeam,
+                    chanceDefesaawayTeam;
             
             private void loadStats() {
                 homeTeam.getStats().addGolsFor(this.homeTeamGoal);
                 homeTeam.getStats().addGoalsConceded(this.awayTeamGoal);
-                awayTeam.getStats().addGolsFor(this.homeTeamGoal);
-                awayTeam.getStats().addGoalsConceded(this.awayTeamGoal);
-
+                awayTeam.getStats().addGolsFor(this.awayTeamGoal);
+                awayTeam.getStats().addGoalsConceded(this.homeTeamGoal);
+                homeTeam.addPlayedCLub(awayTeam);                
                 if (this.homeTeamGoal > this.awayTeamGoal) {
                     homeTeam.getStats().addWin();
                     awayTeam.getStats().addLosses();                           
@@ -276,14 +335,10 @@ public class MachDayScreen extends javax.swing.JFrame {
                 }
             }
             
-            private double calculate(double power) {
-               /* this.homeTeamGoalChance = this.random.nextFloat() + (awayTeam.getAttackPower()/100); 
-                this.awayTeamGoalChance = this.random.nextFloat() + (awayTeam.getAttackPower()/100); 
-                this.chanceDefesahomeTeam = this.random.nextFloat() + (homeTeam.getDefensePower()/100); 
-                this.chanceDefesaawayTeam = this.random.nextFloat() + (awayTeam.getDefensePower()/100);*/
-                
+            private double calculate(double power) {      
                 return this.random.nextFloat() + power/100;
             }
+            
             @Override
             public void run() {
                 lblTimer.setText("'" + this.timer);             
@@ -315,17 +370,49 @@ public class MachDayScreen extends javax.swing.JFrame {
                     }
                 }
             }
-        }, 0, 100);
+        }, 0, 50);
     }
-            
+        
+    private void loadStatsCPU(Club home, int goalHome, Club away, int goalAway) {
+        home.addPlayedCLub(away);          
+        home.getStats().addGolsFor(goalHome);
+        home.getStats().addGoalsConceded(goalAway);        
+      
+        away.getStats().addGolsFor(goalAway);
+        away.getStats().addGoalsConceded(goalHome);        
+        
+        if (goalHome > goalAway) {
+            home.getStats().addWin();
+            away.getStats().addLosses();
+        } else if (goalHome < goalAway) {       
+            away.getStats().addWin();
+            home.getStats().addLosses();            
+        } else {
+            away.getStats().addDraw();
+            home.getStats().addDraw();
+        }
+        updateDataBase(home);
+        updateDataBase(away);
+    }
+    
+    private void otherMatchs() {
+        for (int i = 0; i < round.size(); i++) {
+            Club home = round.get(i).getHomeTeam();
+            Club away = round.get(i).getAwayTeam();
+            int goalHome = new Random().nextInt(5);
+            int goalAway = new Random().nextInt(5);
+            loadStatsCPU(home, goalHome, away, goalAway);
+        }
+    }
+    
     private void btnPauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPauseActionPerformed
         this.paused = !this.paused;
+        this.btnChangePlayer.setEnabled(paused);
         if (paused == true) {
-            this.btnPause.setText("Reiniciar");            
+            this.btnPause.setText("Reiniciar");  
         } else {
             this.btnPause.setText("Pausar");            
-        }
-                
+        }                
     }//GEN-LAST:event_btnPauseActionPerformed
 
     private void btnGoToHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGoToHomeActionPerformed

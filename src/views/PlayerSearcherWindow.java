@@ -1,26 +1,41 @@
 package views;
 
 
+import static classes.MainClass.clubsDataBase;
+import static classes.MainClass.getClub;
+import static classes.MainClass.getPlayer;
 import static classes.MainClass.playersDataBase;
+import classes.club.BaseClub;
+import classes.club.Club;
+import classes.club.FreePlayer;
+import classes.club.Manager;
 import classes.club.Player;
-import classes.club.Statistic;
+import exceptions.ObjectNotFoundException;
+import java.awt.MouseInfo;
 import java.util.List;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public class PlayerSearcherWindow extends javax.swing.JFrame {
-    private final JPopupMenu popupMenu; 
+    private final JPopupMenu menu; 
     private JMenuItem menuItem;
-    public PlayerSearcherWindow() {
+    private Manager manager;
+    
+    public PlayerSearcherWindow(Manager manager) {
         initComponents();      
+        this.manager = manager;
         this.setLocationRelativeTo(this);
+       
         this.searchResultsTable.setAutoCreateRowSorter(true);
         initInputs();
         this.lblFound.setVisible(false);
         this.lblStaticFound.setVisible(false);
-        this.popupMenu = new JPopupMenu();
+        this.menu = new JPopupMenu();
+        this.setAlwaysOnTop(true);
+        
     }
 
     @SuppressWarnings("unchecked")
@@ -52,6 +67,7 @@ public class PlayerSearcherWindow extends javax.swing.JFrame {
         lblStaticFound = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         searchResultsTable = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
         background = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -171,31 +187,10 @@ public class PlayerSearcherWindow extends javax.swing.JFrame {
 
         searchResultsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+
             },
             new String [] {
-                "Nome", "Clube", "Over", "Posição", "Valor", "Salário", "Idade"
+                "Nome", "Clube", "Over", "Posição", "Valor (em milhões)", "Salário (Mi/ano)", "Idade"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -208,6 +203,11 @@ public class PlayerSearcherWindow extends javax.swing.JFrame {
         });
         searchResultsTable.setShowHorizontalLines(false);
         searchResultsTable.setShowVerticalLines(false);
+        searchResultsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                searchResultsTableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(searchResultsTable);
         if (searchResultsTable.getColumnModel().getColumnCount() > 0) {
             searchResultsTable.getColumnModel().getColumn(0).setResizable(false);
@@ -221,6 +221,15 @@ public class PlayerSearcherWindow extends javax.swing.JFrame {
             searchResultsTable.getColumnModel().getColumn(6).setResizable(false);
         }
 
+        jLabel1.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Fechar[X]");
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel1MouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout contentPanelLayout = new javax.swing.GroupLayout(contentPanel);
         contentPanel.setLayout(contentPanelLayout);
         contentPanelLayout.setHorizontalGroup(
@@ -228,18 +237,26 @@ public class PlayerSearcherWindow extends javax.swing.JFrame {
             .addGroup(contentPanelLayout.createSequentialGroup()
                 .addGroup(contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(contentPanelLayout.createSequentialGroup()
-                        .addGap(34, 34, 34)
-                        .addComponent(topSearchInternalPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(contentPanelLayout.createSequentialGroup()
-                        .addGap(59, 59, 59)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 945, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(19, Short.MAX_VALUE))
+                        .addGroup(contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(contentPanelLayout.createSequentialGroup()
+                                .addGap(34, 34, 34)
+                                .addComponent(topSearchInternalPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(contentPanelLayout.createSequentialGroup()
+                                .addGap(59, 59, 59)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 945, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 13, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, contentPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel1)))
+                .addContainerGap())
         );
         contentPanelLayout.setVerticalGroup(
             contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, contentPanelLayout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addComponent(topSearchInternalPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(topSearchInternalPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 381, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28))
@@ -300,6 +317,30 @@ public class PlayerSearcherWindow extends javax.swing.JFrame {
         this.lblFound.setText(""+playersFound);
         
     }//GEN-LAST:event_btnSearchActionPerformed
+
+    private void searchResultsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchResultsTableMouseClicked
+        int button = evt.getButton();      
+        if (button == 3) {
+            int x = MouseInfo.getPointerInfo().getLocation().x;
+            int y = MouseInfo.getPointerInfo().getLocation().y;    
+            int row = this.searchResultsTable.getSelectedRow();
+            String clubName = (String) this.searchResultsTable.getValueAt(row, 1);
+            BaseClub club; 
+            try {
+                club = getClub(clubName);
+            } catch (ObjectNotFoundException ex) {
+                club = new FreePlayer();
+            }
+            initMenuItem(club);
+            this.menu.show(this, x-143, y-98);
+        }
+          
+    }//GEN-LAST:event_searchResultsTableMouseClicked
+
+    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+        this.dispose();
+        new ClubManagementScreen(this.manager).setVisible(true);
+    }//GEN-LAST:event_jLabel1MouseClicked
       
     private boolean firstCheckConditions(Player player) {
         String playerName = this.playerNameInput.getText();
@@ -386,6 +427,56 @@ public class PlayerSearcherWindow extends javax.swing.JFrame {
         this.lblOver.setText(overInputTxt);
     }
     
+    private void initMenuItem(BaseClub club) {
+        this.menuItem = new JMenuItem("Contratar jogador");
+        this.menuItem.getAccessibleContext().setAccessibleDescription("Contratar Jogador");
+        this.menu.removeAll();
+        
+        if (club.equals(this.manager.getClub())) {
+            this.menuItem.setEnabled(false);
+        } 
+        
+        this.menuItem.addActionListener((var evt) -> {
+            if (this.menuItem.isEnabled()) {                
+                negotiate();
+            }
+        });
+        this.menu.add(menuItem);
+    }
+    
+    private void negotiate() {
+        int row = this.searchResultsTable.getSelectedRow();
+        String playerName = (String) this.searchResultsTable.getValueAt(row, 0);                                
+        try {
+            Player player = getPlayer(playerName);        
+
+            if (player.getStatus().equals("Sem Clube")) {
+                Club.NegotiationResponse response;
+                response = this.manager.negotiateWithFreePlayer(player);
+                JOptionPane.showMessageDialog(this, response.getResponse());
+            } else {
+                clubNegotiation(player);   
+            }
+        } catch (ObjectNotFoundException ex) {
+            ex.printStackTrace();            
+        } catch ( NumberFormatException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Digite um valor válido");
+        }
+    }
+    
+    private void clubNegotiation(Player player) throws ObjectNotFoundException {
+        Club.NegotiationResponse response;
+        String message = "Sua oferta por " + player.getName();  
+        String input = JOptionPane.showInputDialog(this, message, "", 1);
+        
+        double offer = Double.parseDouble(input);
+        Club club = getClub(player.getStatus());
+        response = this.manager.buyPlayer(club, player, offer);
+        
+        JOptionPane.showMessageDialog(this, response.getResponse());
+    }
+            
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -411,9 +502,11 @@ public class PlayerSearcherWindow extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+        
+        Manager manager = new Manager("Junior", clubsDataBase().get(1));
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new PlayerSearcherWindow().setVisible(true);
+                new PlayerSearcherWindow(manager).setVisible(true);
             }
         });
     }
@@ -427,6 +520,7 @@ public class PlayerSearcherWindow extends javax.swing.JFrame {
     private javax.swing.JCheckBox checkBoxOver;
     private javax.swing.JTextField clubNameInput;
     private javax.swing.JPanel contentPanel;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblAge;
     private javax.swing.JLabel lblFound;

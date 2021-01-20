@@ -67,6 +67,7 @@ public class Statistic {
 
     public void addGoalsConceded(int goalsConceded) {
         this.goalsConceded += goalsConceded;
+        this.updateGoalDifference();
     }
 
     public void addGolsFor(int golsFor) {
@@ -92,6 +93,9 @@ public class Statistic {
 
     public void addLosses() {
         this.losses++;
+        this.played++;
+    }
+    public void addPlayed() {
         this.played++;
     }
 

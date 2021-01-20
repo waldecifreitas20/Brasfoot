@@ -26,7 +26,7 @@ class ClubTest {
 			other = MainClass.getClub("Barcelona");
 			double offer = 1300;
 			player = other.getPlayers().get(0);
-			possible = me.transferIsPossible(offer, player);
+		//	possible = me.transferIsPossible(offer, player);
 			
 		} catch (ObjectNotFoundException e) {			
 			e.printStackTrace();

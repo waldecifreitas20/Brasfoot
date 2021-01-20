@@ -12,48 +12,52 @@ import classes.club.Player.Position;
 import exceptions.InvalidValueException;
 import exceptions.ObjectNotFoundException;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import views.StartScreen;
 
 public class MainClass{   
     
-    private static List<Club> allClubs = initClubs();   
-    private static List<Player> allPlayers = initPlayers();    
+    private static List<Club> allClubs;   
+    private static List<Player> allPlayers;   
     private static FreePlayer freePlayers = new FreePlayer();
     public static int ADD = 1;
     public static int REMOVE = 0;
     
-    public static void main(String[] args) throws IOException {  
-        //new StartScreen().setVisible(true);
-        System.out.println(allPlayers.size());
-      /*  List<String> matchs = new ArrayList<>();
+    public static void main(String[] args) throws IOException, Exception {         
+        allClubs = initClubs();
+        allPlayers = initPlayers();
+        initStartingTeams();
+        new StartScreen().setVisible(true);
+      
+        /*  List<String> matchs = new ArrayList<>();
         do {
-            String game = sc.drawRound();
-            if (!game.equals("")) {
-                matchs.add(game);
-            }
+        String game = sc.drawRound();
+        if (!game.equals("")) {
+        matchs.add(game);
+        }
         } while (matchs.size() < 30);
-        
         File root = new File("");
         String relativePath = "/src/classes/rounds.txt";
         Path dir = Paths.get(root.getAbsolutePath()+relativePath);
         String times[] = new String[2];
         String game = null;
         try {
-            List<String> readAllLines = Files.readAllLines(dir);
-            int index = 0;
-            while(index < readAllLines.size()) {
-                if (readAllLines.get(index).contains("Bayern")) {
-                    game = (readAllLines.get(index).toUpperCase());                   
-                    break;
-                }
-                index++;
-            }
-            times = game.split("&");
-            System.out.println(times[0]+ " x "+ times[1]);
-        } catch (IOException e) {
-            e.printStackTrace();
+        List<String> readAllLines = Files.readAllLines(dir);
+        int index = 0;
+        while(index < readAllLines.size()) {
+        if (readAllLines.get(index).contains("Bayern")) {
+        game = (readAllLines.get(index).toUpperCase());
+        break;
         }
- */
+        index++;
+        }
+        times = game.split("&");
+        System.out.println(times[0]+ " x "+ times[1]);
+        } catch (IOException e) {
+        e.printStackTrace();
+        }
+         */
      
     }
     public static List<Club> clubsDataBase() {
@@ -98,7 +102,7 @@ public class MainClass{
      
     public static Player getPlayer(String playerName) throws ObjectNotFoundException {
         for (int i = 0; i < playersDataBase().size(); i++) {
-            if (playerName.equals(playersDataBase().get(i).getName())) {
+            if ((playersDataBase().get(i).getName()).contains(playerName)) {
                 return playersDataBase().get(i); 
             }
         }
@@ -107,7 +111,7 @@ public class MainClass{
     
     public static Club getClub(String clubName) throws ObjectNotFoundException {
         for (int i = 0; i < clubsDataBase().size(); i++) {
-            if (clubsDataBase().get(i).getName().equals(clubName)) {
+            if (clubsDataBase().get(i).getName().contains(clubName)) {
                 return clubsDataBase().get(i);
             }
         }
@@ -122,7 +126,8 @@ public class MainClass{
         clubs[2] = bayern();      
         clubs[3] = dortmund();             
         clubs[4] = psg();             
-        clubs[5] = juve();             
+        clubs[5] = juve();       
+        
         List<Club> everyClub = new ArrayList();
         for (Club single : clubs) {
             everyClub.add(single);
@@ -153,7 +158,7 @@ public class MainClass{
         castBarca[7] = new Player("Umtiti", Position.DEFENDER, new Ability(44, 56, 84, 5), 27, "FC Barcelona");
         castBarca[8] = new Player("Sergio Busquets",Position.MIDFIELDER, new Ability(68, 84, 72, 8), 32, "FC Barcelona");
         castBarca[9] = new Player("Pjanic", Position.MIDFIELDER, new Ability(68, 83, 71, 9), 30, "FC Barcelona");
-        castBarca[10] = new Player("Puing", Position.MIDFIELDER, new Ability(70, 75, 40, 5), 21, "FC Barcelona");
+        castBarca[10] = new Player("Puig", Position.MIDFIELDER, new Ability(70, 75, 40, 5), 21, "FC Barcelona");
         castBarca[11] = new Player("P. Coutinho", Position.MIDFIELDER, new Ability(84, 86, 40, 5), 28, "FC Barcelona");
         castBarca[12] = new Player("F. de Jong", Position.MIDFIELDER, new Ability(65, 82, 76, 10), 23, "FC Barcelona");
         castBarca[13] = new Player("A. Griezmann", Position.FORWARD, new Ability(84, 78, 60, 4), 29, "FC Barcelona");
@@ -162,13 +167,36 @@ public class MainClass{
         castBarca[16] = new Player("Pedri", Position.FORWARD, new Ability(76, 71, 40, 5), 18, "FC Barcelona");
         castBarca[17] = new Player("A. Fati", Position.FORWARD, new Ability(79, 72, 40, 5), 18, "FC Barcelona");
         castBarca[18] = new Player("Dembélé", Position.FORWARD, new Ability(81, 76, 40, 5), 23, "FC Barcelona");
-        castBarca[19] = new Player("Trincão", Position.FORWARD, new Ability(74, 76, 40, 5), 21, "FC Barcelona");
+        castBarca[19] = new Player("Trincão", Position.FORWARD, new Ability(74, 76, 40, 5), 21, "FC Barcelona");     
         
         List<Player> cast = new ArrayList();
         for (Player player : castBarca) {
             cast.add(player);
         }
         return new Club("FC Barcelona", cast, 800, Color.yellow);
+    }
+    
+    private static void StartTeamBarcelona() throws ObjectNotFoundException {
+        Player[] eleven = {
+            getPlayer("Ter Stegen"),
+            getPlayer("Piqué"),
+            getPlayer("Lenglet"),
+            getPlayer("Alba"),
+            getPlayer("Dest"),
+            getPlayer("Busquets"),
+            getPlayer("Pjanic"),
+            getPlayer("Puig"),
+            getPlayer("Coutinho"),
+            getPlayer("Messi"),
+            getPlayer("Griez")           
+        };
+        List<Player> mainTeamBarca = new ArrayList<>();
+        for (Player player : eleven) {
+            mainTeamBarca.add(player);
+        }
+        Club barca = getClub("Barcelona");
+        barca.setStartingPlayers(mainTeamBarca);
+        updateDataBase(barca);
     }
     
     private static Club realMadrid() {
@@ -206,6 +234,29 @@ public class MainClass{
         return new Club("Real Madrid CF", cast, 800, Color.black);
     }
     
+    private static void StartTeamReal() throws ObjectNotFoundException {
+        Player[] eleven = {
+            getPlayer("Courtois"),
+            getPlayer("Piqué"),
+            getPlayer("Lenglet"),
+            getPlayer("Alba"),
+            getPlayer("Dest"),
+            getPlayer("Busquets"),
+            getPlayer("Pjanic"),
+            getPlayer("Puig"),
+            getPlayer("Coutinho"),
+            getPlayer("Messi"),
+            getPlayer("Griez")           
+        };
+        List<Player> mainTeamBarca = new ArrayList<>();
+        for (Player player : eleven) {
+            mainTeamBarca.add(player);
+        }
+        Club barca = getClub("Real");
+        barca.setStartingPlayers(mainTeamBarca);
+        updateDataBase(barca);
+    }
+    
     private static Club bayern() {
         Player[] castBayern = new Player[23];
         //new Player("Neymar Jr", "Atacante", (ataque)89,(meio) 85,(defesa) 34,(goleiro) 8,(idade) 28);
@@ -240,6 +291,29 @@ public class MainClass{
         return new Club("Bayern de Munique", cast, 800, Color.white);
     }
     
+    private static void StartTeamBayern() throws ObjectNotFoundException {
+        Player[] eleven = {
+            getPlayer("Neuer"),
+            getPlayer("Piqué"),
+            getPlayer("Lenglet"),
+            getPlayer("Alba"),
+            getPlayer("Dest"),
+            getPlayer("Busquets"),
+            getPlayer("Pjanic"),
+            getPlayer("Puig"),
+            getPlayer("Coutinho"),
+            getPlayer("Messi"),
+            getPlayer("Griez")           
+        };
+        List<Player> mainTeamBarca = new ArrayList<>();
+        for (Player player : eleven) {
+            mainTeamBarca.add(player);
+        }
+        Club barca = getClub("Bayern");
+        barca.setStartingPlayers(mainTeamBarca);
+        updateDataBase(barca);
+    } 
+    
     private static Club dortmund() {
         Player[] castBVB = new Player[21];
         //new Player("Neymar Jr", "Atacante", (ataque)89,(meio) 85,(defesa) 34,(goleiro) 8,(idade) 28);
@@ -270,6 +344,29 @@ public class MainClass{
             cast.add(player);
         }
         return new Club("Borussia Dortmund", cast, 800, Color.BLACK); 
+    }
+    
+    private static void StartTeamDortmund() throws ObjectNotFoundException { 
+        Player[] eleven = { 
+            getPlayer("Burki"),
+            getPlayer("Piqué"),
+            getPlayer("Lenglet"),
+            getPlayer("Alba"),
+            getPlayer("Dest"),
+            getPlayer("Busquets"),
+            getPlayer("Pjanic"),
+            getPlayer("Puig"),
+            getPlayer("Coutinho"),
+            getPlayer("Messi"),
+            getPlayer("Griez")           
+        };
+        List<Player> mainTeamBarca = new ArrayList<>();
+        for (Player player : eleven) {
+            mainTeamBarca.add(player);
+        }
+        Club barca = getClub("Dortmund");
+        barca.setStartingPlayers(mainTeamBarca);
+        updateDataBase(barca);
     }
     
     private static Club psg() {
@@ -306,6 +403,29 @@ public class MainClass{
         return new Club("Paris Saint-Germain", cast, 800, Color.white);
     }
         
+    private static void StartTeamPSG() throws ObjectNotFoundException { 
+        Player[] eleven = {
+            getPlayer("Navas"),
+            getPlayer("Piqué"),
+            getPlayer("Lenglet"),
+            getPlayer("Alba"),
+            getPlayer("Dest"),
+            getPlayer("Busquets"),
+            getPlayer("Pjanic"),
+            getPlayer("Puig"),
+            getPlayer("Coutinho"),
+            getPlayer("Messi"),
+            getPlayer("Griez")           
+        };
+        List<Player> mainTeamBarca = new ArrayList<>();
+        for (Player player : eleven) {
+            mainTeamBarca.add(player);
+        }
+        Club barca = getClub("Paris");
+        barca.setStartingPlayers(mainTeamBarca);
+        updateDataBase(barca);
+    }
+    
     private static Club juve() {
         Player[] castJuve = new Player[1];
         //new Player("Neymar Jr", "Atacante", (ataque)89,(meio) 85,(defesa) 34,(goleiro) 8,(idade) 28);
@@ -318,5 +438,36 @@ public class MainClass{
         return new Club("Juventus FC", cast, 800, Color.white);
     }
     
+    private static void StartTeamJuve() throws ObjectNotFoundException {
+        Player[] eleven = {
+            getPlayer("Szczesny"),
+            getPlayer("Piqué"),
+            getPlayer("Lenglet"),
+            getPlayer("Alba"),
+            getPlayer("Dest"),
+            getPlayer("Busquets"),
+            getPlayer("Pjanic"),
+            getPlayer("Puig"),
+            getPlayer("Coutinho"),
+            getPlayer("Messi"),
+            getPlayer("Griez")           
+        };
+        List<Player> mainTeamBarca = new ArrayList<>();
+        for (Player player : eleven) {
+            mainTeamBarca.add(player);
+        }
+        Club barca = getClub("Juve");
+        barca.setStartingPlayers(mainTeamBarca);
+        updateDataBase(barca);
+    }
+    
+    private static void initStartingTeams() throws ObjectNotFoundException {
+        StartTeamBarcelona();
+        StartTeamReal();
+        StartTeamBayern();
+        StartTeamPSG();
+        StartTeamDortmund();
+        StartTeamJuve();
+    }
 //</editor-fold>
 }
