@@ -64,7 +64,6 @@ public class ClubManagementScreen extends javax.swing.JFrame {
         btnExit = new javax.swing.JLabel();
         lblPlayGame = new javax.swing.JLabel();
         lblTitle = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
         lblEmblem = new javax.swing.JLabel();
         lblSearchPlayer = new javax.swing.JLabel();
         lblStaticMoney = new javax.swing.JLabel();
@@ -121,14 +120,6 @@ public class ClubManagementScreen extends javax.swing.JFrame {
         lblTitle.setForeground(new java.awt.Color(255, 255, 255));
         lblTitle.setText("Real Madrid");
         homePanel.add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 40, 239, 40));
-
-        jButton1.setText("Iniciar Partida");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-        homePanel.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 300, 130, -1));
 
         lblEmblem.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         homePanel.add(lblEmblem, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 127, 110));
@@ -524,35 +515,12 @@ public class ClubManagementScreen extends javax.swing.JFrame {
     private void formWindowStateChanged(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowStateChanged
       
     }//GEN-LAST:event_formWindowStateChanged
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try {
-            if (startTeam.size() == 11) {                    
-            loadRivals();           
-            this.lblDate.setText(this.calendar.getNextDate());
-            this.setVisible(false);
-            MatchDayScreen matchDay = new MatchDayScreen(homeTeam, awayTeam, otherMatchs, this); 
-            matchDay.setVisible(true);             
-                System.out.println(ROUND);
-                if (ROUND == 10) {
-                    matchDay.setLeaderboard(leaderboard);
-                    matchDay.setYour(this.manager);
-                }
-            } else if(this.startTeam.size() < 11){
-                String message = "Selecione ao menos 11 titulares!";
-                JOptionPane.showMessageDialog(this, message, "Alerta!", 0);
-            }
-        } catch (HeadlessException e) {
-            JOptionPane.showMessageDialog(this, "DEU MERDA KRL");
-        }
-    }//GEN-LAST:event_jButton1ActionPerformed
  
     //<editor-fold desc="Variaveis imutaveis">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel background;
     private javax.swing.JLabel btnExit;
     private javax.swing.JPanel homePanel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel lblDate;
     private javax.swing.JLabel lblEmblem;
     private javax.swing.JLabel lblLeaderbord;
