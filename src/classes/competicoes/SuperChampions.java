@@ -1,6 +1,7 @@
 package classes.competicoes;
 
 import static classes.MainClass.getClub;
+import static classes.MainClass.ROUND;
 import classes.club.Club;
 import java.io.File;
 import java.nio.file.Files;
@@ -13,9 +14,9 @@ import java.util.Stack;
 public class SuperChampions {
     private List<Club> participants ;
     private Stack<Club> availableTeam;
-    private Match[][] matchs;
-    private int games;
-
+ 
+    private Match[][] matchs;    
+    
     public SuperChampions(List<Club> teams) {
         this.participants = teams;
         this.availableTeam = new Stack<>();
@@ -82,13 +83,15 @@ public class SuperChampions {
     public Stack<Club> getAvailableTeam() {
         return availableTeam;
     }
-
-    public Match[] getMatchs(int round) {
+    
+    public Match[] getMatchs() {
+        
+        System.out.println(ROUND);
         Match[] games = new Match[3];       
         for (int g = 0; g < 3; g++) {
-            games[g] = matchs[g][round];
+            games[g] = matchs[g][ROUND];
         }
-        
+        ROUND++;
         return games;
     }    
 

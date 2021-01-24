@@ -36,9 +36,9 @@ public class Player {
     public Player() {
         this.name = null;      
         this.salary = 0;             
-        this.status = "não listado";
+        this.status = null;
         this.overall = 0;
-        this.position = "";
+        this.position = null;
     }
     
     private void initPlayer(String position) {

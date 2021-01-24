@@ -1,8 +1,7 @@
 package classes.club;
 
-import static classes.MainClass.ADD;
+import static classes.MainClass.REMOVE;
 import static classes.MainClass.clubsDataBase;
-import static classes.MainClass.updateDataBase;
 import static classes.MainClass.updateFreePlayer;
 import classes.club.Player.Ability;
 import exceptions.InvalidValueException;
@@ -17,10 +16,11 @@ import javax.swing.ImageIcon;
 public class Club extends BaseClub{ 
     //<editor-fold desc="Variaveis">     
     private Color FOREGROUND;
-    private ImageIcon BACKGROUND,EMBLEM,EMBLEM_SMALL;     
+    private ImageIcon BACKGROUND,EMBLEM,EMBLEM_SMALL, BACKGROUND_CHAMPIONS;     
     private Statistic stats;    
     private double money, costs, power, attackPower, defensePower;    
-    private List<Player> substitutes, startingPlayers;   
+    private List<Player> substitutes, startingPlayers; 
+    private boolean controlled = false;
     
     //</editor-fold>
     
@@ -28,8 +28,7 @@ public class Club extends BaseClub{
             double money, Color foreground) {
         super(name, cast);         
         this.substitutes = new ArrayList<>();
-        this.startingPlayers = new ArrayList<>();
-    
+        this.startingPlayers = new ArrayList<>();    
         this.stats = new Statistic();        
         this.money = money;
         initCosts();           
@@ -39,6 +38,7 @@ public class Club extends BaseClub{
             this.EMBLEM = getImage("emblems/" , this.name+" Big",".png"); 
             this.BACKGROUND = getImage("backgrounds/", "background "+this.name, ".png");             
             this.EMBLEM_SMALL = getImage("emblems/", this.name+" Small", ".png"); 
+            this.BACKGROUND_CHAMPIONS = getImage("backgrounds/","background "+this.name+" Winner", ".png");
         } catch (FileNotFoundException e) {
             System.err.println(e.getMessage());
             e.printStackTrace();
@@ -63,10 +63,10 @@ public class Club extends BaseClub{
         double power = 0, attack = 0, defense = 0;
         int strikers = 0, defenders = 0;
         
-        for (int i = 0; i < getPlayers().size(); i++) {
-            power += getPlayers().get(i).getOverall();
-            Ability playerSkills = getPlayers().get(i).getSkills();
-            String playerPosition = getPlayers().get(i).getPosition();
+        for (int i = 0; i < this.startingPlayers.size(); i++) {
+            power += this.startingPlayers.get(i).getOverall();
+            Ability playerSkills = this.startingPlayers.get(i).getSkills();
+            String playerPosition = this.startingPlayers.get(i).getPosition();
             
             if (playerPosition.equals("Atacante")) {                
                 strikers++;
@@ -151,6 +151,14 @@ public class Club extends BaseClub{
     
     //<editor-fold  desc=" Getters ">
 
+    public ImageIcon getBackgroundChampions() {
+        return BACKGROUND_CHAMPIONS;
+    }    
+    
+    public boolean isControlled() {
+        return controlled;
+    }
+    
     public Color getForeground() {
         return FOREGROUND;
     }
@@ -184,10 +192,12 @@ public class Club extends BaseClub{
     }
 
     public double getAttackPower() {
+        this.calculateTeamPower();
         return attackPower;
     }
 
     public double getDefensePower() {
+        this.calculateTeamPower();
         return defensePower;
     }
 
@@ -200,9 +210,40 @@ public class Club extends BaseClub{
     }
 
     //</editor-fold>
-    
-    //Metodos Publicos//    
 
+    protected void setControlled(boolean controlled) {
+        this.controlled = controlled;
+    }    
+    
+    //Metodos Publicos//     
+    public Player getPlayerByPosition(String position, Club club) throws ObjectNotFoundException  {   
+        for (Player player : club.players) {
+            if (player.getPosition().equals(position) && 
+                    !club.getStartingPlayers().contains(player)) {
+                
+                System.out.println("nome:" + player.getName());
+                return player;                
+            }
+        }
+        String message = "Nao existe nenhum jogador no elenco com essa posicao";
+        throw new ObjectNotFoundException(message);
+    }
+    
+    public boolean updateStartTeam(Club club, Player player){
+        try {
+            Player substitute = getPlayerByPosition(player.getPosition(), club);
+            for (int i = 0; i < club.startingPlayers.size(); i++) {
+                if (club.startingPlayers.get(i).equals(player)) {
+                    club.startingPlayers.set(i, substitute);
+                }
+            }
+        } catch (ObjectNotFoundException ex) {
+            return false;
+        }       
+        return true;
+    }
+    
+    
     public void setSubstitutes(List<Player> substitutes) {
         this.substitutes = substitutes;
     }
@@ -225,33 +266,34 @@ public class Club extends BaseClub{
         for (int i = 0; i < this.players.size(); i++) {
             if(player.equals(this.players.get(i))) {                
                 player.receiveContractCancellation();
-                this.players.remove(player);                
+                this.players.remove(player);         
+                this.startingPlayers.remove(player);
                 try {  
-                    updateFreePlayer(player, ADD);
+                    updateFreePlayer(player, REMOVE);
                 } catch (InvalidValueException ex) {
                     ex.printStackTrace();
                 }
-                updateDataBase(this);                 
+                                 
             }
         }
     }
-    
-    public NegotiationResponse negotiateWithClub (Club Club, Player player, double offer) {  
+        
+    public NegotiationResponse negotiateWithClub (Club club, Player player, double offer) {   
         String message;
         if (!this.isExists(player)) {
         	// verifica se o clube aceita vender o jogador
-            NegotiationResponse response = Club.analyzerProposalByPlayer(offer, player); 
+            NegotiationResponse response = club.analyzerProposalByPlayer(offer, player); 
             if(response.getResponse().equals("proposta aceita") ) { 
-                if (player.checkProposal(Club)) { // verifica se o jogador que jogar pelo clube  
+                if (player.checkProposal(club)) { // verifica se o jogador que jogar pelo clube  
                     if (transferIsPossible(offer, player)) { // verifica se o clube tem dinheiro suficiente
                         this.costs += offer;
                         this.money -= offer;
                         player.transferClub(this);                        
-                        Club.players.remove(player);                        
+                        club.players.remove(player);                        
+                        boolean up = updateStartTeam(club, player);    
+                        System.out.println(up);
                         this.players.add(player);
-                        updateDataBase(Club);
-                        updateDataBase(this);      
-                        message = Club.getName() +
+                        message = club.getName() +
                                 " aceitou sua proposta por " +
                                 player.getName();
                         return new NegotiationResponse(message);                        
@@ -264,7 +306,7 @@ public class Club extends BaseClub{
                     return new NegotiationResponse(message);
                 }                
             } 
-            message = "O " + Club.getName() + response.getResponse();
+            message = "O " + club.getName() + response.getResponse();
             return new NegotiationResponse(message);
         } else {
             message = "Você já contratou esse jogador!";
@@ -286,7 +328,7 @@ public class Club extends BaseClub{
         Club.players.add(player);
         this.players.remove(player);
         player.transferClub(Club);
-        updateDataBase(Club);
+        
         
         Club.money -= player.getMarketValue()*1.3;
         this.money += player.getMarketValue()*1.3;
@@ -305,9 +347,9 @@ public class Club extends BaseClub{
                     this.players.add(player);
                     this.costs += player.getSalary();
                     this.money -= player.getSalary();
-                    updateDataBase(this);
+                    
                     try {
-                        updateFreePlayer(player, ADD);
+                        updateFreePlayer(player, REMOVE);
                     } catch (InvalidValueException ex) {
                         System.err.println(ex.getMessage());
                         ex.printStackTrace();                        

@@ -1,27 +1,35 @@
 package views;
 
 import static classes.MainClass.clubsDataBase;
+import static classes.MainClass.getClub;
 import classes.club.Club;
 import classes.club.Statistic;
-import java.awt.Component;
+import classes.competicoes.Leaderboard;
+import exceptions.ObjectNotFoundException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import javax.swing.RowSorter;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 public class LeaderboardWindow extends javax.swing.JFrame {
     private boolean exit = false;
+    private Club first;
+    private Leaderboard table;
     
-    public LeaderboardWindow() {
+    public LeaderboardWindow(List<Club> clubs) {
         initComponents();
+        this.table = new Leaderboard(clubs);
         init();  
         this.setAlwaysOnTop(true);
         this.setLocationRelativeTo(this);
-        this.leaderboard.setAutoCreateRowSorter(true);
+     
     }
 
-   
+    public Club getClubByPosition(int i) throws ObjectNotFoundException {
+        String nameClub = (String)this.leaderboard.getValueAt(i, 1);
+        System.out.println(i + ")"+nameClub);
+        return getClub(nameClub);
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -141,7 +149,7 @@ public class LeaderboardWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel2MouseClicked
 
     public void init() {
-        List<Club> all = clubsDataBase();
+        List<Club> all = this.table.getParticipants();        
         
         DefaultTableModel leaderboard = (DefaultTableModel) this.leaderboard.getModel();
         leaderboard.setRowCount(0);
@@ -164,6 +172,17 @@ public class LeaderboardWindow extends javax.swing.JFrame {
         }
     }
      
+    private void sorter(List<Club> all) {
+        Collections.sort(all, new Comparator() {
+            @Override
+            public int compare(Object o1, Object o2) {
+                Club one = (Club) o1;
+                Club two = (Club) o2;
+                return one.getStats().getPoints() > two.getStats().getPoints() ? -1
+                    : (one.getStats().getPoints() < two.getStats().getPoints() ? +1 : 0);
+            }
+        });
+    }
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -191,7 +210,7 @@ public class LeaderboardWindow extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new LeaderboardWindow().setVisible(true);
+                new LeaderboardWindow(clubsDataBase()).setVisible(true);
             }
         });
     }

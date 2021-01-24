@@ -1,42 +1,50 @@
 package views;
 
-import static classes.MainClass.updateDataBase;
+import static classes.MainClass.ROUND;
+import static classes.MainClass.getClub;
+import static classes.MainClass.getPlayer;
 import classes.club.Club;
+import classes.club.Manager;
 import classes.club.Player;
 import classes.competicoes.Match;
-import java.util.ArrayList;
+import exceptions.ObjectNotFoundException;
+
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
-import javax.swing.ListModel;
 
-public class MachDayScreen extends javax.swing.JFrame {
+public class MatchDayScreen extends javax.swing.JFrame {
     private Club homeTeam, awayTeam;
     private List<Match> round;
     private Timer cronometer = new Timer();
+    private LeaderboardWindow table;
     private boolean paused = false;
+    private Manager manager; 
     private final JFrame clubManagementScreen;
     
-    public MachDayScreen(Club homeTeam, Club awayTeam, List<Match> round, JFrame clubManagementScreen) {
-        initComponents();
+    public MatchDayScreen(Club homeTeam, Club awayTeam, List<Match> round, JFrame clubManagementScreen) {
+        initComponents();        
         this.setAlwaysOnTop(true);
         this.setLocationRelativeTo(this);
         this.clubManagementScreen = clubManagementScreen;
         this.clubManagementScreen.setVisible(false);
-        this.homeTeam = homeTeam;
+        this.homeTeam = homeTeam;        
         this.awayTeam = awayTeam;
         this.round = round;
         this.btnGoToHome.setVisible(false);
         this.btnChangePlayer.setEnabled(false);
         initAssets();
-        System.out.println("asdsadsdas");
+       
         initTeamList(this.listAwayTeamPlayers, this.awayTeam);
         initTeamList(this.listHomeTeamPlayers, this.homeTeam);
-        System.out.println("2222");
+       
+        initSubstitutesList();
+        
         start();   
         otherMatchs();
     }
@@ -180,6 +188,11 @@ public class MachDayScreen extends javax.swing.JFrame {
         scrollPaneSubstitutes.setViewportView(listSubstitutes);
 
         btnChangePlayer.setText("Substituir  Jogador");
+        btnChangePlayer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnChangePlayerActionPerformed(evt);
+            }
+        });
 
         btnGoToHome.setText("Ir para home");
         btnGoToHome.addActionListener(new java.awt.event.ActionListener() {
@@ -257,6 +270,7 @@ public class MachDayScreen extends javax.swing.JFrame {
         this.lblAwayTeamName.setText(this.awayTeam.getName());
         this.lblAwayTeamBadge.setIcon(this.awayTeam.getEmblemSmall());
     }
+    
     private String shortPosition(String position){
         String[] positions = {"ATA", "MC", "DEF", "GOL"};
         
@@ -274,29 +288,35 @@ public class MachDayScreen extends javax.swing.JFrame {
     }
     
     private void initSubstitutesList() {
-        DefaultListModel model = (DefaultListModel) this.listSubstitutes.getModel();
-        model.removeAllElements();       
-        
-        for (Player player: this.homeTeam.getSubstitutes() ) {
+        DefaultListModel model = new DefaultListModel();
+        JList list = this.listSubstitutes;     
+        Club club;
+        if (this.homeTeam.isControlled()) {
+            club = this.homeTeam;
+            this.listAwayTeamPlayers.setEnabled(false);
+        } else {
+            club = this.awayTeam;
+            this.listHomeTeamPlayers.setEnabled(false);
+        }
+        for (int i = 0; i < club.getSubstitutes().size(); i++ ) {
+            Player player = club.getSubstitutes().get(i);
             String position = shortPosition(player.getPosition()); 
             
-            model.addElement(
-                    " [" + position + "] " +
-                    player.getName() + " - " + 
-                    (int) player.getOverall());
+            model.addElement(player.getName());
         }        
-        
+        list.setModel(model);
     }
     
     private void initTeamList(JList jlist,Club club) {       
         List<Player> team = club.getStartingPlayers();       
         DefaultListModel list = new DefaultListModel();
         for (int i = 0; i < team.size(); i++) {
+            String position = shortPosition(team.get(i).getPosition());
             String player = team.get(i).getName();
             list.addElement(player);
         }
         jlist.setModel(list); 
-        System.out.println(list);
+       
     }
     
     private void start() {
@@ -314,8 +334,8 @@ public class MachDayScreen extends javax.swing.JFrame {
             private double 
                     homeTeamGoalChance, 
                     awayTeamGoalChance,
-                    chanceDefesahomeTeam,
-                    chanceDefesaawayTeam;
+                    homeTeamDefenseChance,
+                    awayTeamDefenseChance;
             
             private void loadStats() {
                 homeTeam.getStats().addGolsFor(this.homeTeamGoal);
@@ -348,22 +368,28 @@ public class MachDayScreen extends javax.swing.JFrame {
                         this.cancel();
                         lblTimer.setText("Fim de Jogo");                       
                         this.loadStats();
+                        btnPause.setVisible(false);
+                        btnChangePlayer.setVisible(false);
                         btnGoToHome.setVisible(true);
                     }
                     
                     this.homeTeamGoalChance = calculate(awayTeam.getAttackPower()); 
+                    System.out.println("HA: " +this.homeTeamGoalChance);
                     this.awayTeamGoalChance = calculate(awayTeam.getAttackPower());  
-                    this.chanceDefesahomeTeam = calculate(homeTeam.getDefensePower()); 
-                    this.chanceDefesaawayTeam = calculate(awayTeam.getDefensePower());
+                    System.out.println("AA: "+this.awayTeamGoalChance);
+                    this.homeTeamDefenseChance = calculate(homeTeam.getDefensePower()); 
+                    System.out.println("HD: " +this.homeTeamDefenseChance);
+                    this.awayTeamDefenseChance = calculate(awayTeam.getDefensePower());
+                    System.out.println("AD: " +this.awayTeamDefenseChance);
 
                     if (this.homeTeamGoalChance > (0.99 + awayTeam.getAttackPower()/100) 
-                        && this.chanceDefesaawayTeam < this.homeTeamGoalChance) { 
+                        && this.awayTeamDefenseChance < this.homeTeamGoalChance) { 
 
                         ++this.homeTeamGoal;
                         lblGoalHomeTeam.setText("" + this.homeTeamGoal);                        
                     }
                     if (this.awayTeamGoalChance > (0.99+awayTeam.getAttackPower()/100)
-                        && this.awayTeamGoalChance > this.chanceDefesahomeTeam) {
+                        && this.awayTeamGoalChance > this.homeTeamDefenseChance) {
 
                         ++this.awayTeamGoal;
                         lblGoalAwayTeam.setText("" + this.awayTeamGoal);                        
@@ -372,7 +398,33 @@ public class MachDayScreen extends javax.swing.JFrame {
             }
         }, 0, 50);
     }
+       
+    private void makeAChange() {
+        JList startTeam;
+        JList substituteList = this.listSubstitutes;
+        if (this.listAwayTeamPlayers.isEnabled()) {
+            startTeam = this.listAwayTeamPlayers;
+        } else {
+            startTeam = this.listHomeTeamPlayers;
+        }
+        String nameSubs = (String)substituteList.getSelectedValue();
+        String namePlayer = (String) startTeam.getSelectedValue();
+        try {
+            Player playerStart = getPlayer(namePlayer);
+            Player substitute = getPlayer(nameSubs);
+            Club club = getClub(substitute.getStatus());
+            
+            club.removePlayerToStartTeam(playerStart);
+            club.addPlayerToStartTeam(substitute);
+            club.removePlayerToSubstitutesTeam(substitute);
+            initTeamList(startTeam, club);
+            initSubstitutesList();
+        } catch (ObjectNotFoundException ex) {
+            ex.printStackTrace();
+        }
         
+    }
+    
     private void loadStatsCPU(Club home, int goalHome, Club away, int goalAway) {
         home.addPlayedCLub(away);          
         home.getStats().addGolsFor(goalHome);
@@ -391,8 +443,7 @@ public class MachDayScreen extends javax.swing.JFrame {
             away.getStats().addDraw();
             home.getStats().addDraw();
         }
-        updateDataBase(home);
-        updateDataBase(away);
+      
     }
     
     private void otherMatchs() {
@@ -417,9 +468,25 @@ public class MachDayScreen extends javax.swing.JFrame {
 
     private void btnGoToHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGoToHomeActionPerformed
         this.dispose();
-        this.clubManagementScreen.setVisible(true);        
+        if (ROUND == 10) {            
+            new FinalizeScreen(this.table, this.manager).setVisible(true);
+        } else {            
+            this.clubManagementScreen.setVisible(true);   
+        }
     }//GEN-LAST:event_btnGoToHomeActionPerformed
-       
+
+    private void btnChangePlayerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangePlayerActionPerformed
+        this.makeAChange();
+    }//GEN-LAST:event_btnChangePlayerActionPerformed
+    
+    public void setLeaderboard(LeaderboardWindow leaderboard){
+        this.table = leaderboard;
+    }
+    
+    public void setYour(Manager manager) {
+        this.manager = manager;
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnChangePlayer;
     private javax.swing.JButton btnGoToHome;

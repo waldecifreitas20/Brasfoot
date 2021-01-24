@@ -1,17 +1,13 @@
-
 package views;
 
-import java.io.File;
-import java.io.IOException;
 import static java.lang.System.exit;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 public class StartScreen extends javax.swing.JFrame {
     private String managerName;
     public StartScreen() {
-        initComponents();
+        initComponents();        
         initBackground();
         this.setLocationRelativeTo(null);
         this.btnIStart.setVisible(false);  

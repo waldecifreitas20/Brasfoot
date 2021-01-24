@@ -10,6 +10,7 @@ public class Manager {
     public Manager(String name, Club club) {
         this.name = name;      
         this.club = club;
+        this.club.setControlled(true);
     }
     
     public Club.NegotiationResponse negotiateWithFreePlayer(Player player) 

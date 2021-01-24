@@ -1,5 +1,6 @@
 package views;
 
+import static classes.MainClass.ROUND;
 import static classes.MainClass.clubsDataBase;
 import static classes.MainClass.getPlayer;
 import classes.club.Club;
@@ -10,6 +11,7 @@ import classes.competicoes.Schedule;
 import classes.competicoes.SuperChampions;
 import exceptions.ObjectNotFoundException;
 import java.awt.Color;
+import java.awt.HeadlessException;
 import java.awt.MouseInfo;
 import java.awt.event.ActionEvent;
 import static java.lang.System.exit;
@@ -27,19 +29,21 @@ public class ClubManagementScreen extends javax.swing.JFrame {
     private final JPopupMenu menuPopupCast;     
     private JMenuItem menuItem;    
     private String data;    
+    private Schedule calendar;
     private List<Match> otherMatchs;
     private List<Player> startTeam, substitutes;  
     private SuperChampions superChampions;    
     private Club homeTeam, awayTeam;
-    private LeaderboardWindow leaderboard;
-    private int round = 0;
+    private LeaderboardWindow leaderboard;    
+    
     
     public ClubManagementScreen(Manager manager) {
         initComponents();      
-        this.manager = manager;     
-        this.leaderboard = new LeaderboardWindow();
+        this.manager = manager;  
+        this.calendar = new Schedule();
         this.menuPopupCast = new JPopupMenu();
         this.superChampions = new SuperChampions(clubsDataBase());    
+        this.leaderboard = new LeaderboardWindow(superChampions.getParticipants());
         this.substitutes = new ArrayList<>();
         this.startTeam = new ArrayList<>();
         this.otherMatchs = new ArrayList<>();      
@@ -60,6 +64,7 @@ public class ClubManagementScreen extends javax.swing.JFrame {
         btnExit = new javax.swing.JLabel();
         lblPlayGame = new javax.swing.JLabel();
         lblTitle = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         lblEmblem = new javax.swing.JLabel();
         lblSearchPlayer = new javax.swing.JLabel();
         lblStaticMoney = new javax.swing.JLabel();
@@ -77,7 +82,6 @@ public class ClubManagementScreen extends javax.swing.JFrame {
         lblStaticMaxReservas = new javax.swing.JLabel();
         lblManager = new javax.swing.JLabel();
         background = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
@@ -117,6 +121,14 @@ public class ClubManagementScreen extends javax.swing.JFrame {
         lblTitle.setForeground(new java.awt.Color(255, 255, 255));
         lblTitle.setText("Real Madrid");
         homePanel.add(lblTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 40, 239, 40));
+
+        jButton1.setText("Iniciar Partida");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        homePanel.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 300, 130, -1));
 
         lblEmblem.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         homePanel.add(lblEmblem, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 127, 110));
@@ -273,9 +285,6 @@ public class ClubManagementScreen extends javax.swing.JFrame {
         homePanel.add(lblManager, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 80, 130, 20));
         homePanel.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1200, 610));
 
-        jLabel1.setText("jLabel1");
-        homePanel.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 230, 100, 50));
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -294,7 +303,7 @@ public class ClubManagementScreen extends javax.swing.JFrame {
     private void initAssets(){    
         Color foreground = manager.getClub().getForeground();
         this.data = new Schedule().getCurrentDate();
-        this.lblDate.setText(data);
+        this.lblDate.setText(this.calendar.getCurrentDate());
         this.lblDate.setForeground(foreground);
         this.lblTitle.setText(manager.getClub().getName());
         this.lblTitle.setForeground(foreground);
@@ -412,7 +421,8 @@ public class ClubManagementScreen extends javax.swing.JFrame {
     }
           
     private void loadRivals() {        
-        Match[] matchs = this.superChampions.getMatchs(round);
+     
+        Match[] matchs = this.superChampions.getMatchs();
         this.otherMatchs = new ArrayList<>();
         String thisClub = manager.getClub().getName();        
         for (Match match : matchs) {
@@ -495,13 +505,16 @@ public class ClubManagementScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_lblLeaderbordMouseClicked
 
     private void lblPlayGameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPlayGameMouseClicked
-        
-        if (startTeam.size() < 11) {         
-            loadRivals();      
-            round++;
-            
-            new MachDayScreen(homeTeam, awayTeam, otherMatchs, this).setVisible(true);                
-            
+        if (startTeam.size() == 11) {                    
+        loadRivals();           
+        this.lblDate.setText(this.calendar.getNextDate());
+        MatchDayScreen matchDay = new MatchDayScreen(homeTeam, awayTeam, otherMatchs, this); 
+        matchDay.setVisible(true);             
+            System.out.println(ROUND);
+            if (ROUND == 10) {
+                matchDay.setLeaderboard(leaderboard);
+                matchDay.setYour(this.manager);
+            }
         } else if(this.startTeam.size() < 11){
             String message = "Selecione ao menos 11 titulares!";
             JOptionPane.showMessageDialog(this, message, "Alerta!", 0);
@@ -511,13 +524,35 @@ public class ClubManagementScreen extends javax.swing.JFrame {
     private void formWindowStateChanged(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowStateChanged
       
     }//GEN-LAST:event_formWindowStateChanged
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try {
+            if (startTeam.size() == 11) {                    
+            loadRivals();           
+            this.lblDate.setText(this.calendar.getNextDate());
+            this.setVisible(false);
+            MatchDayScreen matchDay = new MatchDayScreen(homeTeam, awayTeam, otherMatchs, this); 
+            matchDay.setVisible(true);             
+                System.out.println(ROUND);
+                if (ROUND == 10) {
+                    matchDay.setLeaderboard(leaderboard);
+                    matchDay.setYour(this.manager);
+                }
+            } else if(this.startTeam.size() < 11){
+                String message = "Selecione ao menos 11 titulares!";
+                JOptionPane.showMessageDialog(this, message, "Alerta!", 0);
+            }
+        } catch (HeadlessException e) {
+            JOptionPane.showMessageDialog(this, "DEU MERDA KRL");
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
  
     //<editor-fold desc="Variaveis imutaveis">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel background;
     private javax.swing.JLabel btnExit;
     private javax.swing.JPanel homePanel;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel lblDate;
     private javax.swing.JLabel lblEmblem;
     private javax.swing.JLabel lblLeaderbord;

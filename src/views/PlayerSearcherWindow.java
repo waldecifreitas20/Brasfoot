@@ -193,9 +193,16 @@ public class PlayerSearcherWindow extends javax.swing.JFrame {
                 "Nome", "Clube", "Over", "Posição", "Valor (em milhões)", "Salário (Mi/ano)", "Idade"
             }
         ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
+            };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false
             };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
