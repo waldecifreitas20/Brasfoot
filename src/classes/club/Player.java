@@ -73,7 +73,6 @@ public class Player {
     
     public void transferClub(Club club) {
         this.status = club.getName();
-        System.out.println(status);
     }
     
     public void receiveContractCancellation() {

@@ -17,8 +17,5 @@ public class BaseClub {
 
     public List<Player> getPlayers() {
         return players;
-    }
-
-  
-    
+    }  
 }

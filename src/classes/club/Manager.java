@@ -1,6 +1,5 @@
 package classes.club;
 
-import exceptions.InvalidValueException;
 import exceptions.ObjectNotFoundException;
 
 public class Manager {

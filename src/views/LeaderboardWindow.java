@@ -4,7 +4,7 @@ import static classes.MainClass.clubsDataBase;
 import static classes.MainClass.getClub;
 import classes.club.Club;
 import classes.club.Statistic;
-import classes.competicoes.Leaderboard;
+import classes.competitions.Leaderboard;
 import exceptions.ObjectNotFoundException;
 import java.util.Collections;
 import java.util.Comparator;

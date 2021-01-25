@@ -9,17 +9,18 @@ import classes.club.FreePlayer;
 import classes.club.Player;
 import classes.club.Player.Ability;
 import classes.club.Player.Position;
+import classes.competitions.SuperChampions;
 import exceptions.InvalidValueException;
 import exceptions.ObjectNotFoundException;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import views.StartScreen;
 
 public class MainClass{   
     
-    private static List<Club> allClubs;   
-    private static List<Player> allPlayers;   
+    private static List<Club> allClubs = initClubs();
+    private static List<Player> allPlayers = initPlayers();
     private static FreePlayer freePlayers = new FreePlayer();
     public static int ADD;
     public static int REMOVE;
@@ -28,19 +29,21 @@ public class MainClass{
     public static void main(String[] args) {  
         ADD = 1;
         REMOVE = 0;
-        ROUND = 0;
-        allClubs = initClubs();
-        allPlayers = initPlayers();
-        try {
-            initStartingTeams();
-        } catch (ObjectNotFoundException ex) {
-            Logger.getLogger(MainClass.class.getName()).log(Level.SEVERE, null, ex);
+        ROUND = 0;      
+        
+        SuperChampions sc = new SuperChampions(allClubs);
+        if(!sc.loadAllRounds()) {
+           
+            JOptionPane.showMessageDialog(null, "Não foi possível localizar 'rounds.txt'!", "Erro!", 0);        
+        } else {
+            try {
+                initStartingTeams();
+            } catch (ObjectNotFoundException ex) {
+                Logger.getLogger(MainClass.class.getName()).log(Level.SEVERE, null, ex);
+            }            
+            new StartScreen().setVisible(true);          
         }
-       
-       new StartScreen().setVisible(true);       
-     
     }
-    
     public static List<Club> clubsDataBase() {
         return allClubs;
     }

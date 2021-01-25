@@ -6,7 +6,7 @@ import static classes.MainClass.getPlayer;
 import classes.club.Club;
 import classes.club.Manager;
 import classes.club.Player;
-import classes.competicoes.Match;
+import classes.competitions.Match;
 import exceptions.ObjectNotFoundException;
 
 import java.util.List;

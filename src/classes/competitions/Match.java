@@ -1,5 +1,4 @@
-
-package classes.competicoes;
+package classes.competitions;
 
 import classes.club.Club;
 

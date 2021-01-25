@@ -6,12 +6,11 @@ import static classes.MainClass.getPlayer;
 import classes.club.Club;
 import classes.club.Manager;
 import classes.club.Player;
-import classes.competicoes.Match;
-import classes.competicoes.Schedule;
-import classes.competicoes.SuperChampions;
+import classes.competitions.Match;
+import classes.competitions.Schedule;
+import classes.competitions.SuperChampions;
 import exceptions.ObjectNotFoundException;
 import java.awt.Color;
-import java.awt.HeadlessException;
 import java.awt.MouseInfo;
 import java.awt.event.ActionEvent;
 import static java.lang.System.exit;
@@ -28,7 +27,7 @@ public class ClubManagementScreen extends javax.swing.JFrame {
     private final Manager manager;     
     private final JPopupMenu menuPopupCast;     
     private JMenuItem menuItem;    
-    private String data;    
+   
     private Schedule calendar;
     private List<Match> otherMatchs;
     private List<Player> startTeam, substitutes;  
@@ -292,8 +291,7 @@ public class ClubManagementScreen extends javax.swing.JFrame {
     
     
     private void initAssets(){    
-        Color foreground = manager.getClub().getForeground();
-        this.data = new Schedule().getCurrentDate();
+        Color foreground = manager.getClub().getForeground();       
         this.lblDate.setText(this.calendar.getCurrentDate());
         this.lblDate.setForeground(foreground);
         this.lblTitle.setText(manager.getClub().getName());

@@ -1,4 +1,4 @@
-package classes.competicoes;
+package classes.competitions;
 
 public class Schedule {
     private int day, month, year;
