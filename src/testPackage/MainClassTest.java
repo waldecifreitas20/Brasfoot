@@ -2,6 +2,8 @@ package testPackage;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +14,15 @@ import exceptions.ObjectNotFoundException;
 
 class MainClassTest {
 
+	@Test
+	void startTest() {
+		MainClass main = new MainClass();
+		List<Club> all = main.clubsDataBase();
+		
+		Assertions.assertNotNull(all.get(0));
+		Assertions.assertEquals(all.size(), 6);
+	}
+	
 	@Test
 	void getPlayertest() {
 		Player player = null;		

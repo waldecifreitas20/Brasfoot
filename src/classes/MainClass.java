@@ -16,16 +16,14 @@ import exceptions.InvalidValueException;
 import exceptions.ObjectNotFoundException;
 
 public class MainClass {
-	 private static List<Club> allClubs = initClubs();   
+	private static List<Club> allClubs = initClubs();   
     private static List<Player> allPlayers = initPlayers();   
     private static FreePlayer freePlayers = new FreePlayer();
-    public static int ADD;
-    public static int REMOVE;
+    public static int ADD = 1;
+    public static int REMOVE = 0;
     public static int ROUND;   
     
-    public static void main(String[] args) {  
-        ADD = 1;
-        REMOVE = 0;
+    public static void main(String[] args) {          
         ROUND = 0;       
         SuperChampions sc = new SuperChampions(allClubs);
         if(!sc.loadAllRounds()) {           
