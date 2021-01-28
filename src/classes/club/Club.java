@@ -46,7 +46,7 @@ public class Club extends BaseClub{
     }  
 
     //<editor-fold desc=" Métodos internos">
-    private ImageIcon getImage(String folder, String fileName, String format) 
+    private ImageIcon getImage(String folder, String fileName, String format)
             throws FileNotFoundException {
             String url = "/images/"+folder+fileName+format;            
         try {    
@@ -121,7 +121,7 @@ public class Club extends BaseClub{
     private boolean responseClub(double offer, double fee, Player player) {       
         boolean firstCondition = fee > 10 && player.getMarketValue()*0.9 < offer;
         boolean secondCondition = fee < 10 && player.getMarketValue()*1.3 < offer;
-        boolean thirdCondition = fee < 10 && player.getMarketValue()*1.8 < offer;
+        boolean thirdCondition = fee < 0 && player.getMarketValue()*1.8 < offer;
         
         return firstCondition || secondCondition || thirdCondition;
     }
@@ -219,11 +219,7 @@ public class Club extends BaseClub{
         return startingPlayers;
     }
 
-    //</editor-fold>
-
-    protected void setControlled(boolean controlled) {
-        this.controlled = controlled;
-    }    
+    //</editor-fold>     
     
     //Metodos Publicos//     
     private Player getPlayerByPosition(String position, Club club) throws ObjectNotFoundException  {   
@@ -253,6 +249,9 @@ public class Club extends BaseClub{
         return true;
     }
     
+    protected void setControlled(boolean controlled) {
+        this.controlled = controlled;
+    }  
     
     public void setSubstitutes(List<Player> substitutes) {
         this.substitutes = substitutes;
