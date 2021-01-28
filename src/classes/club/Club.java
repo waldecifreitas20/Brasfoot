@@ -45,7 +45,7 @@ public class Club extends BaseClub{
         }
     }  
 
-    //<editor-fold desc=" Métodos internos">
+    //<editor-fold desc=" Metodos internos">
     private ImageIcon getImage(String folder, String fileName, String format)
             throws FileNotFoundException {
             String url = "/images/"+folder+fileName+format;            
@@ -150,7 +150,7 @@ public class Club extends BaseClub{
             } else {
                 counterProposal = player.getMarketValue()*1.3;
             }
-            String message = " não aceita menos que " 
+            String message = " nao aceita menos que " 
                     + ((int)counterProposal+1) 
                     + " Mi \npelo " +player.getName();
             
@@ -290,7 +290,7 @@ public class Club extends BaseClub{
     public NegotiationResponse negotiateWithClub (Club club, Player player, double offer) {   
         String message;
         if (!this.isExists(player)) {
-        	// verifica se o clube aceita vender o jogador
+            // verifica se o clube aceita vender o jogador
             NegotiationResponse response = club.analyzerProposalByPlayer(offer, player); 
             if(response.getResponse().equals("proposta aceita") ) { 
                 if (player.checkProposal(club)) { // verifica se o jogador que jogar pelo clube  
@@ -307,18 +307,18 @@ public class Club extends BaseClub{
                                 player.getName();
                         return new NegotiationResponse(message, true);                        
                     } else {
-                        message = "Você não tem dinheiro suficiente para essa transferência!";
+                        message = "Voce nao tem dinheiro suficiente para essa transferï¿½ncia!";
                        return new NegotiationResponse(message, false);
                     }
                 }else {
-                    message = player.getName() + " não quer jogar pelo seu clube!";
+                    message = player.getName() + " nao quer jogar pelo seu clube!";
                     return new NegotiationResponse(message, false);
                 }                
             } 
             message = "O " + club.getName() + " " + response.getResponse();
             return new NegotiationResponse(message, false);
         } else {
-            message = "Você já contratou esse jogador!";
+            message = "Voce ja contratou esse jogador!";
             return new NegotiationResponse(message, false);
         }
         
@@ -366,15 +366,15 @@ public class Club extends BaseClub{
                     message = player.getName() + " aceitou sua proposta";
                     return new NegotiationResponse(message, true) ;
                 } else {
-                    message = player.getName() + " não jogar pelo seu Clube";
+                    message = player.getName() + " nao jogar pelo seu Clube";
                     return new NegotiationResponse(message, false);
                 }
             } else {    
-                message = "Você não tem dinheiro suficiente para essa transferência!"; 
+                message = "Voce nao tem dinheiro suficiente para essa transferï¿½ncia!"; 
                 return new NegotiationResponse(message, false);
             }
         } else {
-            message = "Você já contratou esse player!";
+            message = "Voce ja contratou esse player!";
             return new NegotiationResponse(message, false); 
         }
     }

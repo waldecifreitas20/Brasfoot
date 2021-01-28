@@ -380,14 +380,14 @@ public class ClubManagementScreen extends javax.swing.JFrame {
             int index = this.tableCast.getSelectedRow();
             String playerName = (String) this.tableCast.getValueAt(index, 1);
             int resp = JOptionPane.showConfirmDialog(this, 
-                    "Vender "+playerName+"?", "Selecione uma opção", 2);
+                    "Vender "+playerName+"?", "Selecione uma opçao", 2);
             
             if (resp == 0) {
                 try {
                     Player player = getPlayer(playerName);                    
                     Club club = this.manager.sellPlayer(player);
                     
-                    String message = player.getName()+" foi vendido para o"+club.getName()
+                    String message = player.getName()+" foi vendido para o "+club.getName()
                             +" por "+ (int)(player.getMarketValue()*1.3)+" Milhões";
                             
                     JOptionPane.showMessageDialog(this, message);
@@ -395,7 +395,7 @@ public class ClubManagementScreen extends javax.swing.JFrame {
                     initMoney();
                 } catch (ObjectNotFoundException ex) {
                     Logger.getLogger(ClubManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-                    JOptionPane.showConfirmDialog(this, "Esse jogador não está mais no seu clube!");
+                    JOptionPane.showConfirmDialog(this, "Esse jogador nao está mais no seu clube!");
                 }
             }
             

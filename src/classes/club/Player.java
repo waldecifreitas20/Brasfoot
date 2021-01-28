@@ -21,7 +21,7 @@ public class Player {
         
         if(age < 16 || age > 42) {
             try {
-                throw new CannotInstantiedObjectException("Jogador com idade inválida");
+                throw new CannotInstantiedObjectException("Jogador com idade invalida");
             } catch(CannotInstantiedObjectException ex) {
                 ex.printStackTrace();
                 this.age = 24; 

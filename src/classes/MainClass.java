@@ -14,27 +14,25 @@ import classes.club.Player.Position;
 import classes.competitions.SuperChampions;
 import exceptions.InvalidValueException;
 import exceptions.ObjectNotFoundException;
+import views.StartScreen;
 
 public class MainClass {
 	private static List<Club> allClubs = initClubs();   
     private static List<Player> allPlayers = initPlayers();   
     private static FreePlayer freePlayers = new FreePlayer();
-    public static int ADD = 1;
-    public static int REMOVE = 0;
+    
+    public final static int ADD = 1;
+    public final static int REMOVE = 0;
     public static int ROUND;   
     
     public static void main(String[] args) {          
         ROUND = 0;       
         SuperChampions sc = new SuperChampions(allClubs);
         if(!sc.loadAllRounds()) {           
-            JOptionPane.showMessageDialog(null, "Não foi possível localizar 'rounds.txt'!", "Erro!", 0);        
+            JOptionPane.showMessageDialog(null, "Nao foi possivel localizar 'rounds.txt'!", "Erro!", 0);        
         } else {
-            try {
-                initStartingTeams();
-            } catch (ObjectNotFoundException ex) {
-                ex.printStackTrace();
-            }            
-                  
+            initStartingTeams();
+            new StartScreen().setVisible(true);
         }
     }
     public static List<Club> clubsDataBase() {
@@ -84,7 +82,7 @@ public class MainClass {
         throw new ObjectNotFoundException(clubName);
     }
     
-    //<editor-fold desc=" Métodos de inicialização ">
+    //<editor-fold desc=" Metodos de inicializaï¿½ao ">
     private static List<Club> initClubs() {
         final Club clubs[] = new Club[6];         
         clubs[0] = barcelona();
@@ -117,7 +115,7 @@ public class MainClass {
         castBarca[0] = new Player("Ter Stegen", Position.GOALKEEPER, new Ability(5, 8, 40, 86), 28, "FC Barcelona");
        
         castBarca[1] = new Player("Jordi Alba", Position.DEFENDER, new Ability(76, 71, 81, 5), 31, "FC Barcelona");
-        castBarca[2] = new Player("Piqué", Position.DEFENDER, new Ability(58, 62, 84, 40), 33, "FC Barcelona");        
+        castBarca[2] = new Player("Pique", Position.DEFENDER, new Ability(58, 62, 84, 40), 33, "FC Barcelona");        
         castBarca[3] = new Player("Lenglet", Position.DEFENDER, new Ability(54, 62, 80, 10), 25, "FC Barcelona");
         castBarca[4] = new Player("Dest", Position.DEFENDER, new Ability(65, 62, 75, 10), 20, "FC Barcelona");
         
@@ -126,21 +124,21 @@ public class MainClass {
         castBarca[7] = new Player("Puig", Position.MIDFIELDER, new Ability(70, 75, 40, 5), 21, "FC Barcelona");
         
         castBarca[8] = new Player("A. Griezmann", Position.FORWARD, new Ability(84, 78, 60, 4), 29, "FC Barcelona");
-        castBarca[9] = new Player("L. Messi", Position.FORWARD, new Ability(94, 88, 57, 2), 33, "FC Barcelona");
+        castBarca[9] = new Player("L. Messi", Position.FORWARD, new Ability(95, 89, 57, 2), 33, "FC Barcelona");
         castBarca[10] = new Player("Pedri", Position.FORWARD, new Ability(76, 71, 40, 5), 18, "FC Barcelona");
         
         //Reservas
         castBarca[11] = new Player("Neto", Position.GOALKEEPER, new Ability(14, 16, 50, 83), 31, "FC Barcelona");  
         
-        castBarca[12] = new Player("Araújo", Position.DEFENDER, new Ability(63, 61, 73, 5), 21, "FC Barcelona");
+        castBarca[12] = new Player("Araujo", Position.DEFENDER, new Ability(63, 61, 73, 5), 21, "FC Barcelona");
         castBarca[13] = new Player("Umtiti", Position.DEFENDER, new Ability(44, 56, 84, 5), 27, "FC Barcelona");
         castBarca[14] = new Player("Pjanic", Position.MIDFIELDER, new Ability(68, 83, 71, 9), 30, "FC Barcelona");
         castBarca[15] = new Player("P. Coutinho", Position.MIDFIELDER, new Ability(84, 86, 40, 5), 28, "FC Barcelona");
         
         castBarca[16] = new Player("Braithwaite", Position.FORWARD, new Ability(78, 68, 50, 5), 29, "FC Barcelona");
         castBarca[17] = new Player("A. Fati", Position.FORWARD, new Ability(79, 72, 40, 5), 18, "FC Barcelona");
-        castBarca[18] = new Player("Dembélé", Position.FORWARD, new Ability(81, 76, 40, 5), 23, "FC Barcelona");
-        castBarca[19] = new Player("Trincão", Position.FORWARD, new Ability(74, 76, 40, 5), 21, "FC Barcelona");     
+        castBarca[18] = new Player("Dembele", Position.FORWARD, new Ability(81, 76, 40, 5), 23, "FC Barcelona");
+        castBarca[19] = new Player("Trincao", Position.FORWARD, new Ability(74, 76, 40, 5), 21, "FC Barcelona");     
         
         List<Player> cast = new ArrayList();
         for (Player player : castBarca) {
@@ -176,21 +174,21 @@ public class MainClass {
         castRMD[3] = new Player("Alaba",Position.DEFENDER, new Ability(70, 80, 83, 10), 28, "Real Madrid CF");
         castRMD[4] = new Player("Carvajal", Position.DEFENDER, new Ability(74, 62, 84, 10), 28, "Real Madrid CF");
        
-        castRMD[5] = new Player("Casemiro", Position.MIDFIELDER, new Ability(65, 88, 80, 10), 28, "Real Madrid CF");
+        castRMD[5] = new Player("Casemiro", Position.MIDFIELDER, new Ability(65, 87, 80, 10), 28, "Real Madrid CF");
         castRMD[6] = new Player("F. Valverde", Position.MIDFIELDER, new Ability(69, 83, 78, 9), 22, "Real Madrid CF");
         castRMD[7] = new Player("T. Kroos",Position.MIDFIELDER, new Ability(69, 85, 77, 8), 30, "Real Madrid CF");
         
         castRMD[8] = new Player("E. Hazard", Position.FORWARD, new Ability(86, 82, 40, 4), 29, "Real Madrid CF");
         castRMD[9] = new Player("Benzema", Position.FORWARD, new Ability(86, 87, 57, 2), 32, "Real Madrid CF");
-        castRMD[10] = new Player("Lucas Vázquez",Position.FORWARD, new Ability(76, 75, 77, 8), 29, "Real Madrid CF");
+        castRMD[10] = new Player("Lucas Vazquez",Position.FORWARD, new Ability(76, 75, 77, 8), 29, "Real Madrid CF");
         
         //Reservas
         castRMD[11] = new Player("Andriy Lunin", Position.GOALKEEPER, new Ability(5, 8, 40, 74), 21, "Real Madrid CF");
         
         castRMD[12] = new Player("Raphael Varane", Position.DEFENDER, new Ability(54, 62, 83, 10), 27, "Real Madrid CF");
         castRMD[13] = new Player("Marcelo", Position.DEFENDER, new Ability(77, 71, 83, 5), 32, "Real Madrid CF");
-        castRMD[14] = new Player("Nacho Fernandéz", Position.DEFENDER, new Ability(54, 62, 82, 10), 30, "Real Madrid CF");
-        castRMD[15] = new Player("E. Militão", Position.DEFENDER, new Ability(54, 62, 79, 10), 22, "Real Madrid CF");
+        castRMD[14] = new Player("Nacho Fernandez", Position.DEFENDER, new Ability(54, 62, 82, 10), 30, "Real Madrid CF");
+        castRMD[15] = new Player("E. Militao", Position.DEFENDER, new Ability(54, 62, 79, 10), 22, "Real Madrid CF");
         castRMD[16] = new Player("Odriozola", Position.DEFENDER, new Ability(64, 62, 78, 10), 25, "Real Madrid CF");
         
         castRMD[17] = new Player("Isco",Position.MIDFIELDER, new Ability(78, 85, 67, 8), 28, "Real Madrid CF");
@@ -199,9 +197,9 @@ public class MainClass {
         
         castRMD[20] = new Player("Odegaard",Position.FORWARD, new Ability(76, 75, 67, 8), 22, "Real Madrid CF");
         castRMD[21] = new Player("L. Jovic", Position.FORWARD, new Ability(80, 65, 57, 2), 23, "Real Madrid CF");
-        castRMD[22] = new Player("Mariano Díaz", Position.FORWARD, new Ability(78, 55, 57, 2), 27, "Real Madrid CF");
+        castRMD[22] = new Player("Mariano Diaz", Position.FORWARD, new Ability(78, 55, 57, 2), 27, "Real Madrid CF");
         castRMD[23] = new Player("Rodrygo", Position.FORWARD, new Ability(76, 69, 40, 5), 19, "Real Madrid CF");
-        castRMD[24] = new Player("Vinicius Júnior", Position.FORWARD, new Ability(75, 68, 40, 5), 20, "Real Madrid CF");
+        castRMD[24] = new Player("Vinicius Junior", Position.FORWARD, new Ability(75, 68, 40, 5), 20, "Real Madrid CF");
       
         List<Player> cast = new ArrayList();
        
@@ -239,18 +237,18 @@ public class MainClass {
         castBayern[4]  = new Player("Kimmich",Position.DEFENDER, new Ability(59, 78, 87, 17), 25, "Bayern de Munique");
         
         castBayern[5] = new Player("Goretzka",Position.MIDFIELDER, new Ability(58, 83, 62, 1), 25, "Bayern de Munique");
-        castBayern[6] = new Player("Javi Martínez",Position.MIDFIELDER, new Ability(58, 82, 60, 15), 32, "Bayern de Munique");
-        castBayern[7] = new Player("T. Müller",Position.MIDFIELDER, new Ability(87, 86, 60, 7), 31, "Bayern de Munique");
+        castBayern[6] = new Player("Javi Martinez",Position.MIDFIELDER, new Ability(58, 82, 60, 15), 32, "Bayern de Munique");
+        castBayern[7] = new Player("T. Muller",Position.MIDFIELDER, new Ability(87, 86, 60, 7), 31, "Bayern de Munique");
         
-        castBayern[8] = new Player("L. Sané",Position.FORWARD, new Ability(85, 82, 30, 17), 24, "Bayern de Munique");
+        castBayern[8] = new Player("L. Sane",Position.FORWARD, new Ability(85, 82, 30, 17), 24, "Bayern de Munique");
         castBayern[9] = new Player("R. Lewandowski",Position.FORWARD, new Ability(93, 80, 40, 27), 32, "Bayern de Munique");
         castBayern[10] = new Player("S. Gnabry",Position.FORWARD, new Ability(87, 85, 48, 27), 25, "Bayern de Munique");
         
         //Reservas
-        castBayern[11]  = new Player("Nübel",Position.GOALKEEPER, new Ability(5, 8, 40, 83), 25, "Bayern de Munique");
+        castBayern[11]  = new Player("Nubel",Position.GOALKEEPER, new Ability(5, 8, 40, 83), 25, "Bayern de Munique");
         
-        castBayern[12]  = new Player("Lucas Hernández",Position.DEFENDER, new Ability(70, 72, 80, 15), 24, "Bayern de Munique");
-        castBayern[13]  = new Player("Süle",Position.DEFENDER, new Ability(40, 42, 84, 10), 25, "Bayern de Munique");
+        castBayern[12]  = new Player("Lucas Hernandez",Position.DEFENDER, new Ability(70, 72, 80, 15), 24, "Bayern de Munique");
+        castBayern[13]  = new Player("Sule",Position.DEFENDER, new Ability(40, 42, 84, 10), 25, "Bayern de Munique");
         castBayern[14]  = new Player("Pavard",Position.DEFENDER, new Ability(60, 62, 83, 10), 24, "Bayern de Munique");
         castBayern[15]  = new Player("Richards",Position.DEFENDER, new Ability(40, 42, 76, 20), 20, "Bayern de Munique");
  
@@ -300,9 +298,9 @@ public class MainClass {
         castBVB[6] = new Player("Witsel",Position.MIDFIELDER, new Ability(58, 83, 82, 1), 31, "Borussia Dortmund");
         castBVB[7] = new Player("T. Hazard",Position.MIDFIELDER, new Ability(75, 80, 60, 15), 27, "Borussia Dortmund");
         
-        castBVB[8] = new Player("J. Brandt",Position.FORWARD, new Ability(83, 80, 40, 27), 24, "Borussia Dortmund");
-        castBVB[9] = new Player("Haland",Position.FORWARD, new Ability(84, 78, 48, 27), 20, "Borussia Dortmund");
-        castBVB[10] = new Player("Sancho",Position.FORWARD, new Ability(83, 80, 30, 17), 20,"Borussia Dortmund");
+        castBVB[8] = new Player("J. Brandt",Position.FORWARD, new Ability(83, 81, 40, 27), 24, "Borussia Dortmund");
+        castBVB[9] = new Player("Haland",Position.FORWARD, new Ability(85, 78, 48, 27), 20, "Borussia Dortmund");
+        castBVB[10] = new Player("Sancho",Position.FORWARD, new Ability(84, 81, 30, 17), 20,"Borussia Dortmund");
         
         //Reservas        
         castBVB[11] = new Player("Hitz",Position.GOALKEEPER, new Ability(5, 8, 40, 80), 33, "Borussia Dortmund");
@@ -350,16 +348,16 @@ public class MainClass {
         
         castPSG[1] = new Player("J. Bernat",Position.DEFENDER, new Ability(50, 70, 80, 32), 27, "Paris Saint-Germain");
         castPSG[2] = new Player("Marquinhos",Position.DEFENDER, new  Ability(50, 81, 84, 32), 26, "Paris Saint-Germain");
-        castPSG[3] = new Player("Kimpembé",Position.DEFENDER, new Ability(50, 78, 82, 32), 25, "Paris Saint-Germain");
+        castPSG[3] = new Player("Kimpembe",Position.DEFENDER, new Ability(50, 78, 82, 32), 25, "Paris Saint-Germain");
         castPSG[4] = new Player("L. Kurzawa",Position.DEFENDER, new Ability(50, 72, 81, 32), 28, "Paris Saint-Germain");
         
         castPSG[5] = new Player("T. Kehrer",Position.DEFENDER, new Ability(50, 76, 82, 32), 24, "Paris Saint-Germain");
         castPSG[6] = new Player("M. Verratti",Position.MIDFIELDER, new Ability(69, 84, 75, 12), 28, "Paris Saint-Germain");
         castPSG[7] = new Player("Ander Herrera",Position.MIDFIELDER, new Ability(70, 83, 72, 12), 31, "Paris Saint-Germain");
         
-        castPSG[8] = new Player("K. Mbappé",Position.FORWARD, new Ability(87, 81, 58, 2), 22, "Paris Saint-Germain");
-        castPSG[9] = new Player("Neymar",Position.FORWARD, new Ability(90, 86, 52, 12), 28, "Paris Saint-Germain");
-        castPSG[10] = new Player("Di María",Position.FORWARD, new Ability(86, 85, 52, 12), 32, "Paris Saint-Germain");
+        castPSG[8] = new Player("K. Mbappe",Position.FORWARD, new Ability(87, 81, 58, 2), 22, "Paris Saint-Germain");
+        castPSG[9] = new Player("Neymar",Position.FORWARD, new Ability(92, 87, 52, 12), 28, "Paris Saint-Germain");
+        castPSG[10] = new Player("Di Maria",Position.FORWARD, new Ability(86, 85, 52, 12), 32, "Paris Saint-Germain");
         
         //Reservas
         castPSG[11] = new Player("Sergio Rico",Position.GOALKEEPER,new Ability(5, 8, 40, 83), 27, "Paris Saint-Germain");
@@ -369,7 +367,7 @@ public class MainClass {
         castPSG[14] = new Player("Dagba",Position.DEFENDER, new Ability(50, 62, 78, 32), 22, "Paris Saint-Germain");
         
         castPSG[15] = new Player("Danilo P.",Position.MIDFIELDER, new Ability(50, 77, 75, 12), 29, "Paris Saint-Germain");
-        castPSG[16] = new Player("I. Gueyé",Position.MIDFIELDER, new Ability(65, 79, 75, 12), 31, "Paris Saint-Germain");
+        castPSG[16] = new Player("I. Gueye",Position.MIDFIELDER, new Ability(65, 79, 75, 12), 31, "Paris Saint-Germain");
         castPSG[17] = new Player("Rafinha",Position.MIDFIELDER, new Ability(75, 83, 72, 12), 27, "Paris Saint-Germain");
         castPSG[18] = new Player("J. Draxler",Position.MIDFIELDER, new Ability(79, 77, 52, 12), 27, "Paris Saint-Germain");
         
@@ -415,7 +413,7 @@ public class MainClass {
         castJuve[6] = new Player("A. Ramsey", Position.MIDFIELDER, new Ability(65, 84, 75, 12), 30, "Juventus FC");
         castJuve[7] = new Player("P. Dybala", Position.FORWARD, new Ability(85, 88, 55, 12), 27, "Juventus FC");
         
-        castJuve[8] = new Player("Cristiano Ronaldo", Position.FORWARD, new Ability(93, 75, 55, 12), 35, "Juventus FC");
+        castJuve[8] = new Player("Cristiano Ronaldo", Position.FORWARD, new Ability(95, 75, 55, 12), 35, "Juventus FC");
         castJuve[9] = new Player("F. Chiesa", Position.FORWARD, new Ability(85, 84, 55, 12), 23, "Juventus FC");
         castJuve[10] = new Player("A. Morata", Position.FORWARD, new Ability(86, 78, 55, 12), 28, "Juventus FC");        
         //reservas
@@ -459,12 +457,16 @@ public class MainClass {
         //;
     }
     
-    private static void initStartingTeams() throws ObjectNotFoundException {
-        StartTeamBarcelona();
-        StartTeamReal();
-        StartTeamBayern();
-        StartTeamPSG();
-        StartTeamDortmund();
-        StartTeamJuve();
+    private static void initStartingTeams() {
+    	try {
+			StartTeamBarcelona();
+			StartTeamReal();
+			StartTeamBayern();
+			StartTeamPSG();
+			StartTeamDortmund();
+			StartTeamJuve();
+		} catch (ObjectNotFoundException e) {		
+			e.printStackTrace();
+		}
     }
 }

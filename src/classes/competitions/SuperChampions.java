@@ -14,14 +14,11 @@ import java.util.List;
 import java.util.Stack;
 
 public class SuperChampions {
-    private List<Club> participants ;
-    private Stack<Club> availableTeam;
- 
+    private List<Club> participants ; 
     private Match[][] matchs;    
     
     public SuperChampions(List<Club> teams) {
         this.participants = teams;
-        this.availableTeam = new Stack<>();
         this.matchs = new Match[3][10];
     }   
        
@@ -74,4 +71,9 @@ public class SuperChampions {
         return games;
     }    
 
+    public List<Club> getParticipants() {
+        return participants;
+    }
+
+    
 }
