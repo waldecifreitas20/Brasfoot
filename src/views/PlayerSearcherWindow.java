@@ -162,16 +162,24 @@ public class PlayerSearcherWindow extends javax.swing.JFrame {
         });
         topSearchInternalPanel.add(btnSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(404, 139, 190, -1));
 
+        checkBoxMarketValue.setBackground(new java.awt.Color(0, 0, 70));
         checkBoxMarketValue.setForeground(new java.awt.Color(255, 255, 255));
         checkBoxMarketValue.setText("Qualquer Valor de mercado");
         topSearchInternalPanel.add(checkBoxMarketValue, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 100, 230, 20));
 
+        checkBoxOver.setBackground(new java.awt.Color(0, 0, 102));
         checkBoxOver.setForeground(new java.awt.Color(255, 255, 255));
         checkBoxOver.setText("Qualquer overall");
         topSearchInternalPanel.add(checkBoxOver, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, 130, 20));
 
+        checkBoxAge.setBackground(new java.awt.Color(0, 0, 92));
         checkBoxAge.setForeground(new java.awt.Color(255, 255, 255));
         checkBoxAge.setText("Qualquer idade");
+        checkBoxAge.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkBoxAgeActionPerformed(evt);
+            }
+        });
         topSearchInternalPanel.add(checkBoxAge, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 100, 130, 20));
 
         lblFound.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
@@ -348,6 +356,10 @@ public class PlayerSearcherWindow extends javax.swing.JFrame {
         this.dispose();
         new ClubManagementScreen(this.manager).setVisible(true);
     }//GEN-LAST:event_jLabel1MouseClicked
+
+    private void checkBoxAgeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkBoxAgeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_checkBoxAgeActionPerformed
       
     private boolean firstCheckConditions(Player player) {
         String playerName = this.playerNameInput.getText();
@@ -454,6 +466,7 @@ public class PlayerSearcherWindow extends javax.swing.JFrame {
     private void negotiate() {
         int row = this.searchResultsTable.getSelectedRow();
         String playerName = (String) this.searchResultsTable.getValueAt(row, 0);                                
+        
         try {
             Player player = getPlayer(playerName);        
 
@@ -466,7 +479,7 @@ public class PlayerSearcherWindow extends javax.swing.JFrame {
             }
         } catch (ObjectNotFoundException ex) {
             ex.printStackTrace();            
-        } catch ( NumberFormatException ex) {
+        } catch (NumberFormatException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Digite um valor válido");
         }
@@ -480,8 +493,8 @@ public class PlayerSearcherWindow extends javax.swing.JFrame {
         double offer = Double.parseDouble(input);
         Club club = getClub(player.getStatus());
         response = this.manager.buyPlayer(club, player, offer);
-        
-        JOptionPane.showMessageDialog(this, response.getResponse());
+        String title = "Diretoria de " +club.getName();
+        JOptionPane.showMessageDialog(this, response.getResponse(), title, 1);
     }
             
     public static void main(String args[]) {

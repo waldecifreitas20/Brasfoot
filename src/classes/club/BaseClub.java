@@ -3,7 +3,7 @@ package classes.club;
 import java.util.List;
 
 public class BaseClub {
-    protected String name;
+	protected String name;
     protected List<Player> players;
 
     public BaseClub(String name, List<Player> players) {
@@ -17,5 +17,5 @@ public class BaseClub {
 
     public List<Player> getPlayers() {
         return players;
-    }  
+    }
 }

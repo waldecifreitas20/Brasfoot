@@ -21,7 +21,7 @@ public class Player {
         
         if(age < 16 || age > 42) {
             try {
-                throw new CannotInstantiedObjectException("Jogador com idade inv√°lida");
+                throw new CannotInstantiedObjectException("Jogador com idade inv·lida");
             } catch(CannotInstantiedObjectException ex) {
                 ex.printStackTrace();
                 this.age = 24; 
@@ -73,6 +73,7 @@ public class Player {
     
     public void transferClub(Club club) {
         this.status = club.getName();
+       
     }
     
     public void receiveContractCancellation() {

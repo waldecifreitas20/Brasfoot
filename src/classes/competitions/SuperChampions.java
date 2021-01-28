@@ -24,32 +24,7 @@ public class SuperChampions {
         this.availableTeam = new Stack<>();
         this.matchs = new Match[3][10];
     }   
-    //<editor-fold>
-    /*
-    public String drawRound() {
-        availableTeam.removeAllElements();
-        availableTeam.addAll(participants);            
-        
-        Collections.shuffle(availableTeam);            
-        Club homeTeam = availableTeam.pop();
-        Collections.shuffle(availableTeam);            
-        Club awayTeam = availableTeam.pop();
-        String game = "";
-        if (homeTeam.notPlayed(awayTeam)) {
-            homeTeam.getStats().addClubsPlayed(awayTeam);               
-            this.games++;
-            game = homeTeam.getName()+" x "+awayTeam.getName();
-           
-        } else {
-            availableTeam.push(awayTeam);
-            availableTeam.push(homeTeam);
-
-        }
-        return game;      
-    }
-    */
-    //</editor-fold>
-    
+       
     public boolean loadAllRounds() {
         File root = new File("");
         String relativePath = "rounds.txt";
@@ -86,15 +61,7 @@ public class SuperChampions {
             
         }
         return true;
-    }
-    
-    public List<Club> getParticipants() {
-        return participants;
-    }
-
-    public Stack<Club> getAvailableTeam() {
-        return availableTeam;
-    }
+    }  
     
     public Match[] getMatchs() {
         

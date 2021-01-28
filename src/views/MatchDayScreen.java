@@ -355,7 +355,8 @@ public class MatchDayScreen extends javax.swing.JFrame {
                 }
             }
             
-            private double calculate(double power) {      
+            private double calculate(double power) {   
+                System.out.println(power);
                 return this.random.nextFloat() + power/100;
             }
             
@@ -396,7 +397,7 @@ public class MatchDayScreen extends javax.swing.JFrame {
                     }
                 }
             }
-        }, 0, 50);
+        }, 0, 100);
     }
        
     private void makeAChange() {

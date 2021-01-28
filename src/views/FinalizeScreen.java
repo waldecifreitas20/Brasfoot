@@ -147,7 +147,7 @@ public class FinalizeScreen extends javax.swing.JFrame {
             this.background.setIcon(this.manager.getClub().getBackgroundChampions());
         } else {
             firstLine = "Game Over";
-            secondLine = "Você terminou na posição " + this.finalPosition;
+            secondLine = "Você terminou em " + this.finalPosition + "º lugar";
             this.background.setIcon(this.champion.getBackgroundChampions());
         }
         this.lblForManager.setText(firstLine);
